@@ -7,6 +7,7 @@ import Map from "./components/Map";
 import NetworkForm from "./components/NetworkForm";
 import Login from "./components/Login";
 import "./i18n";
+import Register from "./components/Register";
 
 function App() {
   const { t } = useTranslation();
@@ -20,6 +21,7 @@ function App() {
             <Route path="/" element={<Map />} />
             <Route path="/add-network" element={<NetworkForm />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />          
           </Routes>
         </main>
         <Footer />
