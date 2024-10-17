@@ -38,5 +38,7 @@
   "colleague": "Коллега",
   "family": "Семья",
   "professional": "Профессиональный",
-  "cultural": "Культурный"
+  "cultural": "Культурный",
+  "selectCentrality": "Выберите центральность",
+  "degreeCentrality": "Центральность степени"
 }

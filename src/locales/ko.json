@@ -45,5 +45,7 @@
   "languagesSpoken": "구사 언어",
   "mission": "미션",
   "services": "서비스",
-  "contactInfo": "연락처 정보"
+  "contactInfo": "연락처 정보",
+  "selectCentrality": "중심성선택",
+  "degreeCentrality": "차수중심성"
 }

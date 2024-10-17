@@ -38,5 +38,7 @@
   "colleague": "同事",
   "family": "家人",
   "professional": "专业",
-  "cultural": "文化"
+  "cultural": "文化",
+  "selectCentrality": "选择中心性",
+  "degreeCentrality": "度数中心"
 }

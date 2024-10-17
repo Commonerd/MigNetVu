@@ -40,6 +40,8 @@ const Map: React.FC = () => {
     entityType: "all",
     yearRange: [1900, 2023],
   });
+  const [centralityType, setCentralityType] = useState<string>("none");
+
 
   useEffect(() => {
     setMigrants(mockMigrants);
@@ -155,6 +157,42 @@ const Map: React.FC = () => {
     new Set(migrants.map((m) => m.ethnicity))
   );
 
+  const calculateCentrality = () => {
+    const centrality = {};
+    const connectionsMap = {};
+  
+    // Build a connections map
+    [...migrants, ...organizations].forEach((entity) => {
+      connectionsMap[entity.id] = entity.connections.map(
+        (connection) => connection.targetId
+      );
+    });
+  
+    // Calculate centrality based on the selected type
+    switch (centralityType) {
+      case "degree":
+        for (const id in connectionsMap) {
+          centrality[id] = connectionsMap[id].length;
+        }
+        break;
+      case "betweenness":
+        // Implement Betweenness Centrality calculation logic here
+        break;
+      case "closeness":
+        // Implement Closeness Centrality calculation logic here
+        break;
+      case "eigenvector":
+        // Implement Eigenvector Centrality calculation logic here
+        break;
+      default:
+        break;
+    }
+  
+    return centrality;
+  };
+  
+  const centralityValues = calculateCentrality();
+
   return (
     <div className="h-[calc(100vh-64px)]">
       <div className="p-4 bg-white">
@@ -240,6 +278,17 @@ const Map: React.FC = () => {
               className="w-20 p-2 border rounded"
             />
           </div>
+            <select
+            value={centralityType}
+            onChange={(e) => setCentralityType(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option value="none">{t("selectCentrality")}</option>
+            <option value="degree">{t("degreeCentrality")}</option>
+            <option value="betweenness">{t("betweennessCentrality")}</option>
+            <option value="closeness">{t("closenessCentrality")}</option>
+            <option value="eigenvector">{t("eigenvectorCentrality")}</option>
+          </select>
         </div>
       </div>
       <MapContainer
@@ -252,14 +301,21 @@ const Map: React.FC = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         {(filters.entityType === "all" || filters.entityType === "migrant") &&
-          filteredMigrants.map((migrant) => (
-            <Marker
-              key={`migrant-${migrant.id}`}
-              position={[migrant.latitude, migrant.longitude]}
-            >
-              <Popup>
-                <div>
+          filteredMigrants.map((migrant) => {
+            const size = centralityType !== "none" ? centralityValues[migrant.id] || 0 : 10; // Default size
+            return (
+              <Marker
+                key={`migrant-${migrant.id}`}
+                position={[migrant.latitude, migrant.longitude]}
+                icon={L.divIcon({
+                  className: 'custom-marker',
+                  html: `<div style="width: ${size}px; height: ${size}px; background-color: red; border-radius: 50%;"></div>`, // Example of a circular marker
+                  iconSize: [size, size]
+                })}
+              >
+                <Popup>
                   <h2 className="text-lg font-bold">{migrant.name}</h2>
+                  <p>{t("centrality")}: {centralityValues[migrant.id] || 0}</p>
                   <p>
                     {t("nationality")}: {migrant.nationality}
                   </p>
@@ -281,16 +337,23 @@ const Map: React.FC = () => {
                   <p>
                     {t("languagesSpoken")}: {migrant.languagesSpoken.join(", ")}
                   </p>
-                </div>
               </Popup>
             </Marker>
-          ))}
+          );
+        })}
         {(filters.entityType === "all" ||
           filters.entityType === "organization") &&
-          filteredOrganizations.map((org) => (
+          filteredOrganizations.map((org) => {
+            const size = centralityType !== "none" ? centralityValues[org.id] || 0 : 10; // Default size
+            return (
             <Marker
               key={`org-${org.id}`}
               position={[org.latitude, org.longitude]}
+              icon={L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="width: ${size}px; height: ${size}px; background-color: blue; border-radius: 50%;"></div>`, // Example of a circular marker
+                iconSize: [size, size]
+              })}
             >
               <Popup>
                 <div>
@@ -313,7 +376,8 @@ const Map: React.FC = () => {
                 </div>
               </Popup>
             </Marker>
-          ))}
+          );
+        })}
         {getEdges().map((edge, index) => (
           <Polyline
             key={index}

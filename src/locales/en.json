@@ -45,5 +45,8 @@
   "languagesSpoken": "Languages Spoken",
   "mission": "Mission",
   "services": "Services",
-  "contactInfo": "Contact Information"
+  "contactInfo": "Contact Information",
+  "selectCentrality": "selectCentrality",
+  "degreeCentrality": "degreeCentrality"
+
 }
