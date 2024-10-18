@@ -158,8 +158,8 @@ const Map: React.FC = () => {
   );
 
   const calculateCentrality = () => {
-    const centrality = {};
-    const connectionsMap = {};
+    const centrality: { [id: number]: number } = {};
+    const connectionsMap: { [id: number]: number[] } = {};
   
     // Build a connections map
     [...migrants, ...organizations].forEach((entity) => {
@@ -302,7 +302,7 @@ const Map: React.FC = () => {
         />
         {(filters.entityType === "all" || filters.entityType === "migrant") &&
           filteredMigrants.map((migrant) => {
-            const size = centralityType !== "none" ? centralityValues[migrant.id] || 0 : 10; // Default size
+            const size = centralityType !== "none" ? (centralityValues[migrant.id] || 0) * 5 + 10 : 10; // Degree 중심성에 따라 크기 조정
             return (
               <Marker
                 key={`migrant-${migrant.id}`}
