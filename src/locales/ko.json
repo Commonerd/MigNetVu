@@ -48,6 +48,6 @@
   "contactInfo": "연락처 정보",
   "selectCentrality": "중심성선택",
   "degreeCentrality": "차수중심성",
-  "clossnessCentrality": "근접중심성"
+  "closenessCentrality": "근접중심성"
 
 }

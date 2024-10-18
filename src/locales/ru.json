@@ -41,5 +41,5 @@
   "cultural": "Культурный",
   "selectCentrality": "Выберите центральность",
   "degreeCentrality": "Центральность степени",
-  "clossnessCentrality": "Центральность близости"
+  "closenessCentrality": "Центральность близости"
 }
