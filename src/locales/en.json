@@ -47,6 +47,8 @@
   "services": "Services",
   "contactInfo": "Contact Information",
   "selectCentrality": "selectCentrality",
-  "degreeCentrality": "degreeCentrality"
+  "degreeCentrality": "degreeCentrality",
+  "clossnessCentrality": "clossnessCentrality"
+
 
 }

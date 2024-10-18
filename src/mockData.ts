@@ -15,6 +15,9 @@ export const mockMigrants: Migrant[] = [
     languagesSpoken: ["Korean", "English"],
     connections: [
       { targetId: 2, targetType: "migrant", strength: 4, type: "friend" },
+      { targetId: 3, targetType: "migrant", strength: 2, type: "friend" },
+      { targetId: 4, targetType: "migrant", strength: 2, type: "friend" },
+
       {
         targetId: 1,
         targetType: "organization",
@@ -102,6 +105,9 @@ export const mockMigrants: Migrant[] = [
     education: "Master's in Civil Engineering",
     languagesSpoken: ["Arabic", "English"],
     connections: [
+      { targetId: 2, targetType: "migrant", strength: 4, type: "friend" },
+      { targetId: 3, targetType: "migrant", strength: 2, type: "friend" },
+      { targetId: 4, targetType: "migrant", strength: 2, type: "friend" },
       { targetId: 6, targetType: "migrant", strength: 4, type: "friend" },
       {
         targetId: 4,
@@ -168,6 +174,8 @@ export const mockMigrants: Migrant[] = [
     education: "Master's in Mechanical Engineering",
     languagesSpoken: ["Russian", "English"],
     connections: [
+      { targetId: 2, targetType: "migrant", strength: 4, type: "friend" },
+      { targetId: 3, targetType: "migrant", strength: 2, type: "friend" },
       { targetId: 4, targetType: "migrant", strength: 3, type: "colleague" },
       {
         targetId: 1,
@@ -218,6 +226,9 @@ export const mockMigrants: Migrant[] = [
         strength: 4,
         type: "professional",
       },
+      { targetId: 2, targetType: "migrant", strength: 4, type: "friend" },
+      { targetId: 3, targetType: "migrant", strength: 2, type: "friend" },
+      { targetId: 4, targetType: "migrant", strength: 2, type: "friend" },
       { targetId: 10, targetType: "migrant", strength: 3, type: "colleague" },
     ],
   },
@@ -300,6 +311,9 @@ export const mockMigrants: Migrant[] = [
     education: "Bachelor's in Media Studies",
     languagesSpoken: ["Japanese", "English"],
     connections: [
+      { targetId: 2, targetType: "migrant", strength: 4, type: "friend" },
+      { targetId: 3, targetType: "migrant", strength: 2, type: "friend" },
+      { targetId: 4, targetType: "migrant", strength: 2, type: "friend" },
       { targetId: 9, targetType: "migrant", strength: 3, type: "colleague" },
       {
         targetId: 1,

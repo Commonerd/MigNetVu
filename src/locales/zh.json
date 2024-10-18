@@ -40,5 +40,7 @@
   "professional": "专业",
   "cultural": "文化",
   "selectCentrality": "选择中心性",
-  "degreeCentrality": "度数中心"
+  "degreeCentrality": "度数中心",
+  "clossnessCentrality": "近接中心性"
+
 }

@@ -157,39 +157,64 @@ const Map: React.FC = () => {
     new Set(migrants.map((m) => m.ethnicity))
   );
 
-  const calculateCentrality = () => {
-    const centrality: { [id: number]: number } = {};
-    const connectionsMap: { [id: number]: number[] } = {};
-  
-    // Build a connections map
-    [...migrants, ...organizations].forEach((entity) => {
-      connectionsMap[entity.id] = entity.connections.map(
-        (connection) => connection.targetId
-      );
+  // Utility function to calculate shortest path using BFS
+const bfsShortestPath = (startId: number, connectionsMap: { [id: number]: number[] }) => {
+  const queue: [number, number][] = [[startId, 0]]; // [nodeId, distance]
+  const distances: { [id: number]: number } = { [startId]: 0 };
+  const visited = new Set<number>([startId]);
+
+  while (queue.length > 0) {
+    const [current, dist] = queue.shift()!;
+    connectionsMap[current].forEach((neighbor) => {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        distances[neighbor] = dist + 1;
+        queue.push([neighbor, dist + 1]);
+      }
     });
-  
-    // Calculate centrality based on the selected type
-    switch (centralityType) {
-      case "degree":
-        for (const id in connectionsMap) {
-          centrality[id] = connectionsMap[id].length;
-        }
-        break;
-      case "betweenness":
-        // Implement Betweenness Centrality calculation logic here
-        break;
-      case "closeness":
-        // Implement Closeness Centrality calculation logic here
-        break;
-      case "eigenvector":
-        // Implement Eigenvector Centrality calculation logic here
-        break;
-      default:
-        break;
-    }
-  
-    return centrality;
-  };
+  }
+
+  return distances;
+};
+
+
+const calculateCentrality = () => {
+  const centrality: { [id: number]: number } = {};
+  const connectionsMap: { [id: number]: number[] } = {};
+
+  // Build a connections map
+  [...migrants, ...organizations].forEach((entity) => {
+    connectionsMap[entity.id] = entity.connections.map(
+      (connection) => connection.targetId
+    );
+  });
+
+  switch (centralityType) {
+    case "degree":
+      for (const id in connectionsMap) {
+        centrality[id] = connectionsMap[id].length;
+      }
+      break;
+    case "betweenness":
+      // Implement Betweenness Centrality calculation logic here
+      break;
+    case "closeness":
+      for (const id in connectionsMap) {
+        const distances = bfsShortestPath(Number(id), connectionsMap);
+        const totalDistance = Object.values(distances).reduce((acc, d) => acc + d, 0);
+        centrality[id] = totalDistance > 0 ? 1 / totalDistance : 0; // Closeness formula
+      }
+      break;
+    case "eigenvector":
+      // Implement Eigenvector Centrality calculation logic here
+      break;
+    default:
+      break;
+  }
+
+  return centrality;
+};
+
   
   const centralityValues = calculateCentrality();
 
@@ -381,10 +406,10 @@ const Map: React.FC = () => {
         {getEdges().map((edge, index) => (
           <Polyline
             key={index}
-            positions={edge.slice(0, 2) as [number, number][]}
-            color={edge[2] as string}
+            positions={edge.slice(0, 2) as unknown as [number, number][]}
+            color={edge[2] as unknown as string}
             weight={2}
-            opacity={(edge[3] as number) * 0.16 + 0.2}
+            opacity={(edge[3] as unknown as number) * 0.16 + 0.2}
           />
         ))}
       </MapContainer>
