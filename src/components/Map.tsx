@@ -50,11 +50,11 @@ const Legend = () => {
       const labels = [
         `<div style="display: inline-block; width: 15px; height: 15px; background-color: red; border-radius: 50%; margin-right: 5px;"></div> ${t("migrant")}`, // 이주자
         `<div style="display: inline-block; width: 15px; height: 15px; background-color: blue; border-radius: 50%; margin-right: 5px;"></div> ${t("organization")}`, // 단체
-        `<div style="display: inline-block; width: 15px; height: 15px; background-color: blue; margin-right: 5px;"></div> ${t("friend")}`,
-        `<div style="display: inline-block; width: 15px; height: 15px; background-color: green; margin-right: 5px;"></div> ${t("colleague")}`,
-        `<div style="display: inline-block; width: 15px; height: 15px; background-color: red; margin-right: 5px;"></div> ${t("family")}`,
-        `<div style="display: inline-block; width: 15px; height: 15px; background-color: purple; margin-right: 5px;"></div> ${t("professional")}`,
-        `<div style="display: inline-block; width: 15px; height: 15px; background-color: orange; margin-right: 5px;"></div> ${t("cultural")}`,
+        `<div style="display: inline-block; width: 15px; height: 5px; background-color: blue; margin-right: 5px;"></div> ${t("friend")}`,
+        `<div style="display: inline-block; width: 15px; height: 5px; background-color: green; margin-right: 5px;"></div> ${t("colleague")}`,
+        `<div style="display: inline-block; width: 15px; height: 5px; background-color: red; margin-right: 5px;"></div> ${t("family")}`,
+        `<div style="display: inline-block; width: 15px; height: 5px; background-color: purple; margin-right: 5px;"></div> ${t("professional")}`,
+        `<div style="display: inline-block; width: 15px; height: 5px; background-color: orange; margin-right: 5px;"></div> ${t("cultural")}`,
       ];
 
       div.innerHTML = labels.join("<br>");
@@ -71,8 +71,6 @@ const Legend = () => {
   return null;
 };
 
-
-
 const Map: React.FC = () => {
   const { t } = useTranslation();
   const [migrants, setMigrants] = useState<Migrant[]>([]);
@@ -86,7 +84,6 @@ const Map: React.FC = () => {
   });
   const [centralityType, setCentralityType] = useState<string>("none");
 
-
   useEffect(() => {
     setMigrants(mockMigrants);
     setOrganizations(mockOrganizations);
@@ -94,7 +91,7 @@ const Map: React.FC = () => {
 
   const getEntityById = (
     id: number,
-    type: EntityType
+    type: EntityType,
   ): Migrant | Organization | undefined => {
     return type === "migrant"
       ? migrants.find((m) => m.id === id)
@@ -128,7 +125,7 @@ const Map: React.FC = () => {
         ) {
           const target = getEntityById(
             connection.targetId,
-            connection.targetType
+            connection.targetType,
           );
           if (target) {
             edges.push([
@@ -173,7 +170,7 @@ const Map: React.FC = () => {
 
   const handleFilterChange = (
     key: keyof FilterOptions,
-    value: string | number[]
+    value: string | number[],
   ) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
@@ -185,186 +182,197 @@ const Map: React.FC = () => {
       (filters.ethnicity === "all" ||
         migrant.ethnicity === filters.ethnicity) &&
       migrant.migrationYear >= filters.yearRange[0] &&
-      migrant.migrationYear <= filters.yearRange[1]
+      migrant.migrationYear <= filters.yearRange[1],
   );
 
   const filteredOrganizations = organizations.filter(
     (org) =>
       org.foundationYear >= filters.yearRange[0] &&
-      org.foundationYear <= filters.yearRange[1]
+      org.foundationYear <= filters.yearRange[1],
   );
 
   const uniqueNationalities = Array.from(
-    new Set(migrants.map((m) => m.nationality))
+    new Set(migrants.map((m) => m.nationality)),
   );
   const uniqueEthnicities = Array.from(
-    new Set(migrants.map((m) => m.ethnicity))
+    new Set(migrants.map((m) => m.ethnicity)),
   );
 
   // Utility function to calculate shortest path using BFS
-const bfsShortestPath = (startId: number, connectionsMap: { [id: number]: number[] }) => {
-  const queue: [number, number][] = [[startId, 0]]; // [nodeId, distance]
-  const distances: { [id: number]: number } = { [startId]: 0 };
-  const visited = new Set<number>([startId]);
+  const bfsShortestPath = (
+    startId: number,
+    connectionsMap: { [id: number]: number[] },
+  ) => {
+    const queue: [number, number][] = [[startId, 0]]; // [nodeId, distance]
+    const distances: { [id: number]: number } = { [startId]: 0 };
+    const visited = new Set<number>([startId]);
 
-  while (queue.length > 0) {
-    const [current, dist] = queue.shift()!;
-    connectionsMap[current].forEach((neighbor) => {
-      if (!visited.has(neighbor)) {
-        visited.add(neighbor);
-        distances[neighbor] = dist + 1;
-        queue.push([neighbor, dist + 1]);
-      }
+    while (queue.length > 0) {
+      const [current, dist] = queue.shift()!;
+      connectionsMap[current].forEach((neighbor) => {
+        if (!visited.has(neighbor)) {
+          visited.add(neighbor);
+          distances[neighbor] = dist + 1;
+          queue.push([neighbor, dist + 1]);
+        }
+      });
+    }
+
+    return distances;
+  };
+
+  const calculateCentrality = () => {
+    let centrality: { [id: number]: number } = {};
+    const connectionsMap: { [id: number]: number[] } = {};
+
+    // Build a connections map
+    [...migrants, ...organizations].forEach((entity) => {
+      connectionsMap[entity.id] = entity.connections.map(
+        (connection) => connection.targetId,
+      );
     });
-  }
 
-  return distances;
-};
+    switch (centralityType) {
+      case "degree":
+        for (const id in connectionsMap) {
+          centrality[id] = connectionsMap[id].length;
+        }
+        break;
 
+      case "betweenness":
+        // Betweenness centrality implementation (as shown previously)
+        for (const id in connectionsMap) {
+          centrality[id] = 0;
+        }
 
-const calculateCentrality = () => {
-  let centrality: { [id: number]: number } = {};
-  const connectionsMap: { [id: number]: number[] } = {};
+        for (const startId in connectionsMap) {
+          const shortestPaths: { [id: number]: number[][] } = {};
+          const distances: { [id: number]: number } = {};
+          const queue: number[] = [Number(startId)];
+          const predecessors: { [id: number]: number[] } = {};
 
-  // Build a connections map
-  [...migrants, ...organizations].forEach((entity) => {
-    connectionsMap[entity.id] = entity.connections.map(
-      (connection) => connection.targetId
-    );
-  });
+          Object.keys(connectionsMap).forEach((id) => {
+            distances[Number(id)] = Infinity;
+            shortestPaths[Number(id)] = [];
+            predecessors[Number(id)] = [];
+          });
 
-  switch (centralityType) {
-    case "degree":
-      for (const id in connectionsMap) {
-        centrality[id] = connectionsMap[id].length;
-      }
-      break;
+          distances[Number(startId)] = 0;
+          shortestPaths[Number(startId)].push([Number(startId)]);
 
-    case "betweenness":
-      // Betweenness centrality implementation (as shown previously)
-      for (const id in connectionsMap) {
-        centrality[id] = 0;
-      }
+          while (queue.length > 0) {
+            const current = queue.shift()!;
+            connectionsMap[current].forEach((neighbor) => {
+              if (distances[neighbor] === Infinity) {
+                distances[neighbor] = distances[current] + 1;
+                queue.push(neighbor);
+              }
+              if (distances[neighbor] === distances[current] + 1) {
+                predecessors[neighbor].push(current);
+              }
+            });
+          }
 
-      for (const startId in connectionsMap) {
-        const shortestPaths: { [id: number]: number[][] } = {};
-        const distances: { [id: number]: number } = {};
-        const queue: number[] = [Number(startId)];
-        const predecessors: { [id: number]: number[] } = {};
+          const dependency: { [id: number]: number } = {};
+
+          Object.keys(predecessors).forEach((id) => {
+            dependency[Number(id)] = 0;
+          });
+
+          const nodes = Object.keys(predecessors)
+            .map(Number)
+            .sort((a, b) => distances[b] - distances[a]);
+
+          nodes.forEach((w) => {
+            predecessors[w].forEach((v) => {
+              const fraction = (1 + dependency[w]) / predecessors[w].length;
+              dependency[v] += fraction;
+            });
+
+            if (w !== Number(startId)) {
+              centrality[w] += dependency[w];
+            }
+          });
+        }
+
+        const totalNodes = Object.keys(connectionsMap).length;
+        Object.keys(centrality).forEach((id) => {
+          centrality[Number(id)] /= (totalNodes - 1) * (totalNodes - 2);
+        });
+
+        break;
+
+      case "closeness":
+        for (const id in connectionsMap) {
+          const distances = bfsShortestPath(Number(id), connectionsMap);
+          const totalDistance = Object.values(distances).reduce(
+            (acc, d) => acc + d,
+            0,
+          );
+          centrality[id] = totalDistance > 0 ? 1 / totalDistance : 0;
+        }
+        break;
+
+      case "eigenvector":
+        // Initialize eigenvector centrality values to 1
+        const numNodes = Object.keys(connectionsMap).length;
+        let eigenCentrality: { [id: number]: number } = {};
+        let prevEigenCentrality: { [id: number]: number } = {};
 
         Object.keys(connectionsMap).forEach((id) => {
-          distances[Number(id)] = Infinity;
-          shortestPaths[Number(id)] = [];
-          predecessors[Number(id)] = [];
+          eigenCentrality[Number(id)] = 1;
         });
 
-        distances[Number(startId)] = 0;
-        shortestPaths[Number(startId)].push([Number(startId)]);
+        const maxIterations = 100;
+        const tolerance = 1e-6;
+        let delta = Infinity;
+        let iterations = 0;
 
-        while (queue.length > 0) {
-          const current = queue.shift()!;
-          connectionsMap[current].forEach((neighbor) => {
-            if (distances[neighbor] === Infinity) {
-              distances[neighbor] = distances[current] + 1;
-              queue.push(neighbor);
-            }
-            if (distances[neighbor] === distances[current] + 1) {
-              predecessors[neighbor].push(current);
-            }
-          });
-        }
+        // Power iteration to calculate eigenvector centrality
+        while (delta > tolerance && iterations < maxIterations) {
+          prevEigenCentrality = { ...eigenCentrality };
+          delta = 0;
 
-        const dependency: { [id: number]: number } = {};
-
-        Object.keys(predecessors).forEach((id) => {
-          dependency[Number(id)] = 0;
-        });
-
-        const nodes = Object.keys(predecessors).map(Number).sort((a, b) => distances[b] - distances[a]);
-
-        nodes.forEach((w) => {
-          predecessors[w].forEach((v) => {
-            const fraction = (1 + dependency[w]) / predecessors[w].length;
-            dependency[v] += fraction;
-          });
-
-          if (w !== Number(startId)) {
-            centrality[w] += dependency[w];
+          for (const id in connectionsMap) {
+            let sum = 0;
+            connectionsMap[Number(id)].forEach((neighbor) => {
+              sum += prevEigenCentrality[neighbor];
+            });
+            eigenCentrality[Number(id)] = sum;
           }
-        });
-      }
 
-      const totalNodes = Object.keys(connectionsMap).length;
-      Object.keys(centrality).forEach((id) => {
-        centrality[Number(id)] /= (totalNodes - 1) * (totalNodes - 2);
-      });
+          // Normalize the eigenvector centrality values
+          const norm = Math.sqrt(
+            Object.values(eigenCentrality).reduce(
+              (acc, val) => acc + val * val,
+              0,
+            ),
+          );
+          for (const id in eigenCentrality) {
+            eigenCentrality[Number(id)] /= norm;
+          }
 
-      break;
-
-    case "closeness":
-      for (const id in connectionsMap) {
-        const distances = bfsShortestPath(Number(id), connectionsMap);
-        const totalDistance = Object.values(distances).reduce((acc, d) => acc + d, 0);
-        centrality[id] = totalDistance > 0 ? 1 / totalDistance : 0;
-      }
-      break;
-
-    case "eigenvector":
-      // Initialize eigenvector centrality values to 1
-      const numNodes = Object.keys(connectionsMap).length;
-      let eigenCentrality: { [id: number]: number } = {};
-      let prevEigenCentrality: { [id: number]: number } = {};
-
-      Object.keys(connectionsMap).forEach((id) => {
-        eigenCentrality[Number(id)] = 1;
-      });
-
-      const maxIterations = 100;
-      const tolerance = 1e-6;
-      let delta = Infinity;
-      let iterations = 0;
-
-      // Power iteration to calculate eigenvector centrality
-      while (delta > tolerance && iterations < maxIterations) {
-        prevEigenCentrality = { ...eigenCentrality };
-        delta = 0;
-
-        for (const id in connectionsMap) {
-          let sum = 0;
-          connectionsMap[Number(id)].forEach((neighbor) => {
-            sum += prevEigenCentrality[neighbor];
+          // Calculate the delta (change) between iterations
+          Object.keys(eigenCentrality).forEach((id) => {
+            delta += Math.abs(
+              eigenCentrality[Number(id)] - prevEigenCentrality[Number(id)],
+            );
           });
-          eigenCentrality[Number(id)] = sum;
+
+          iterations++;
         }
 
-        // Normalize the eigenvector centrality values
-        const norm = Math.sqrt(
-          Object.values(eigenCentrality).reduce((acc, val) => acc + val * val, 0)
-        );
-        for (const id in eigenCentrality) {
-          eigenCentrality[Number(id)] /= norm;
-        }
+        // Assign eigenvector centrality to the result
+        centrality = eigenCentrality;
+        break;
 
-        // Calculate the delta (change) between iterations
-        Object.keys(eigenCentrality).forEach((id) => {
-          delta += Math.abs(eigenCentrality[Number(id)] - prevEigenCentrality[Number(id)]);
-        });
+      default:
+        break;
+    }
 
-        iterations++;
-      }
+    return centrality;
+  };
 
-      // Assign eigenvector centrality to the result
-      centrality = eigenCentrality;
-      break;
-
-    default:
-      break;
-  }
-
-  return centrality;
-};
-
-  
   const centralityValues = calculateCentrality();
 
   return (
@@ -452,7 +460,7 @@ const calculateCentrality = () => {
               className="w-20 p-2 border rounded"
             />
           </div>
-            <select
+          <select
             value={centralityType}
             onChange={(e) => setCentralityType(e.target.value)}
             className="p-2 border rounded"
@@ -476,20 +484,25 @@ const calculateCentrality = () => {
         />
         {(filters.entityType === "all" || filters.entityType === "migrant") &&
           filteredMigrants.map((migrant) => {
-            const size = centralityType !== "none" ? (centralityValues[migrant.id] || 0) * 5 + 10 : 10; // Degree 중심성에 따라 크기 조정
+            const size =
+              centralityType !== "none"
+                ? (centralityValues[migrant.id] || 0) * 5 + 10
+                : 10; // Degree 중심성에 따라 크기 조정
             return (
               <Marker
                 key={`migrant-${migrant.id}`}
                 position={[migrant.latitude, migrant.longitude]}
                 icon={L.divIcon({
-                  className: 'custom-marker',
+                  className: "custom-marker",
                   html: `<div style="width: ${size}px; height: ${size}px; background-color: red; border-radius: 50%;"></div>`, // Example of a circular marker
-                  iconSize: [size, size]
+                  iconSize: [size, size],
                 })}
               >
                 <Popup>
                   <h2 className="text-lg font-bold">{migrant.name}</h2>
-                  <p>{t("centrality")}: {centralityValues[migrant.id] || 0}</p>
+                  <p>
+                    {t("centrality")}: {centralityValues[migrant.id] || 0}
+                  </p>
                   <p>
                     {t("nationality")}: {migrant.nationality}
                   </p>
@@ -511,47 +524,48 @@ const calculateCentrality = () => {
                   <p>
                     {t("languagesSpoken")}: {migrant.languagesSpoken.join(", ")}
                   </p>
-              </Popup>
-            </Marker>
-          );
-        })}
+                </Popup>
+              </Marker>
+            );
+          })}
         {(filters.entityType === "all" ||
           filters.entityType === "organization") &&
           filteredOrganizations.map((org) => {
-            const size = centralityType !== "none" ? centralityValues[org.id] || 0 : 10; // Default size
+            const size =
+              centralityType !== "none" ? centralityValues[org.id] || 0 : 10; // Default size
             return (
-            <Marker
-              key={`org-${org.id}`}
-              position={[org.latitude, org.longitude]}
-              icon={L.divIcon({
-                className: 'custom-marker',
-                html: `<div style="width: ${size}px; height: ${size}px; background-color: blue; border-radius: 50%;"></div>`, // Example of a circular marker
-                iconSize: [size, size]
-              })}
-            >
-              <Popup>
-                <div>
-                  <h2 className="text-lg font-bold">{org.name}</h2>
-                  <p>
-                    {t("foundationYear")}: {org.foundationYear}
-                  </p>
-                  <p>
-                    {t("type")}: {org.type}
-                  </p>
-                  <p>
-                    {t("mission")}: {org.mission}
-                  </p>
-                  <p>
-                    {t("services")}: {org.services.join(", ")}
-                  </p>
-                  <p>
-                    {t("contactInfo")}: {org.contactInfo}
-                  </p>
-                </div>
-              </Popup>
-            </Marker>
-          );
-        })}
+              <Marker
+                key={`org-${org.id}`}
+                position={[org.latitude, org.longitude]}
+                icon={L.divIcon({
+                  className: "custom-marker",
+                  html: `<div style="width: ${size}px; height: ${size}px; background-color: blue; border-radius: 50%;"></div>`, // Example of a circular marker
+                  iconSize: [size, size],
+                })}
+              >
+                <Popup>
+                  <div>
+                    <h2 className="text-lg font-bold">{org.name}</h2>
+                    <p>
+                      {t("foundationYear")}: {org.foundationYear}
+                    </p>
+                    <p>
+                      {t("type")}: {org.type}
+                    </p>
+                    <p>
+                      {t("mission")}: {org.mission}
+                    </p>
+                    <p>
+                      {t("services")}: {org.services.join(", ")}
+                    </p>
+                    <p>
+                      {t("contactInfo")}: {org.contactInfo}
+                    </p>
+                  </div>
+                </Popup>
+              </Marker>
+            );
+          })}
         {getEdges().map((edge, index) => (
           <Polyline
             key={index}
