@@ -5,6 +5,7 @@ import {
   Marker,
   Popup,
   Polyline,
+  useMap,
 } from "react-leaflet";
 import { useTranslation } from "react-i18next";
 import "leaflet/dist/leaflet.css";
@@ -28,6 +29,41 @@ L.Icon.Default.mergeOptions({
   shadowUrl:
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png",
 });
+
+// 범례 컴포넌트 생성
+// 범례 컴포넌트 생성
+const Legend = () => {
+  const map = useMap();
+  const { t } = useTranslation(); // Use the translation hook
+
+  useEffect(() => {
+    const legend = L.control({ position: "topright" });
+
+    legend.onAdd = () => {
+      const div = L.DomUtil.create("div", "info legend");
+      
+      const labels = [
+        `<div style="display: inline-block; width: 15px; height: 15px; background-color: blue; margin-right: 5px;"></div> ${t("friend")}`,
+        `<div style="display: inline-block; width: 15px; height: 15px; background-color: green; margin-right: 5px;"></div> ${t("colleague")}`,
+        `<div style="display: inline-block; width: 15px; height: 15px; background-color: red; margin-right: 5px;"></div> ${t("family")}`,
+        `<div style="display: inline-block; width: 15px; height: 15px; background-color: purple; margin-right: 5px;"></div> ${t("professional")}`,
+        `<div style="display: inline-block; width: 15px; height: 15px; background-color: orange; margin-right: 5px;"></div> ${t("cultural")}`,
+      ];
+
+      div.innerHTML = labels.join("<br>");
+      return div;
+    };
+
+    legend.addTo(map);
+
+    return () => {
+      legend.remove();
+    };
+  }, [map, t]); // Add `t` to the dependency array
+
+  return null;
+};
+
 
 const Map: React.FC = () => {
   const { t } = useTranslation();
@@ -517,6 +553,7 @@ const calculateCentrality = () => {
             opacity={(edge[3] as unknown as number) * 0.16 + 0.2}
           />
         ))}
+        <Legend />
       </MapContainer>
     </div>
   );
