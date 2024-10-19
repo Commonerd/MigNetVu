@@ -195,9 +195,71 @@ const calculateCentrality = () => {
         centrality[id] = connectionsMap[id].length;
       }
       break;
-    case "betweenness":
-      // Implement Betweenness Centrality calculation logic here
-      break;
+      case "betweenness":
+        // Initialize betweenness centrality values to 0
+        for (const id in connectionsMap) {
+          centrality[id] = 0;
+        }
+  
+        // Calculate betweenness centrality for each node
+        for (const startId in connectionsMap) {
+          const shortestPaths: { [id: number]: number[][] } = {};
+          const distances: { [id: number]: number } = {};
+          const queue: number[] = [Number(startId)];
+          const predecessors: { [id: number]: number[] } = {};
+  
+          // Initialize distances and paths
+          Object.keys(connectionsMap).forEach((id) => {
+            distances[Number(id)] = Infinity;
+            shortestPaths[Number(id)] = [];
+            predecessors[Number(id)] = [];
+          });
+  
+          distances[Number(startId)] = 0;
+          shortestPaths[Number(startId)].push([Number(startId)]);
+  
+          // BFS to find shortest paths
+          while (queue.length > 0) {
+            const current = queue.shift()!;
+            connectionsMap[current].forEach((neighbor) => {
+              if (distances[neighbor] === Infinity) {
+                distances[neighbor] = distances[current] + 1;
+                queue.push(neighbor);
+              }
+              if (distances[neighbor] === distances[current] + 1) {
+                predecessors[neighbor].push(current);
+              }
+            });
+          }
+  
+          const dependency: { [id: number]: number } = {};
+  
+          Object.keys(predecessors).forEach((id) => {
+            dependency[Number(id)] = 0;
+          });
+  
+          // Accumulate dependencies by backtracking from each node
+          const nodes = Object.keys(predecessors).map(Number).sort((a, b) => distances[b] - distances[a]);
+  
+          nodes.forEach((w) => {
+            predecessors[w].forEach((v) => {
+              const fraction = (1 + dependency[w]) / predecessors[w].length;
+              dependency[v] += fraction;
+            });
+  
+            if (w !== Number(startId)) {
+              centrality[w] += dependency[w];
+            }
+          });
+        }
+  
+        // Normalize the betweenness centrality scores
+        const totalNodes = Object.keys(connectionsMap).length;
+        Object.keys(centrality).forEach((id) => {
+          centrality[Number(id)] /= (totalNodes - 1) * (totalNodes - 2);
+        });
+  
+        break;
     case "closeness":
       for (const id in connectionsMap) {
         const distances = bfsShortestPath(Number(id), connectionsMap);
