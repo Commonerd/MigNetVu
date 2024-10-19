@@ -126,7 +126,7 @@ const Map: React.FC = () => {
   }, []);
 
   const handleEntityClick = (id: number) => {
-    setHighlightedNode(id);
+    setHighlightedNode((prevId) => (prevId === id ? null : id));
   };
 
   const getEntityById = (
