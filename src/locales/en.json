@@ -50,5 +50,7 @@
   "degreeCentrality": "degree centrality",
   "betweenessCentrality": "betweeness centrality",
   "closenessCentrality": "closeness centrality",
-  "eigenvectorCentrality": "eigenvector centrality"
+  "eigenvectorCentrality": "eigenvector centrality",
+  "connectionType": "relashionship",
+  "connectionStrength": "strength of relashionship"
 }

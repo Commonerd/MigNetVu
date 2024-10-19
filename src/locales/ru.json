@@ -43,5 +43,7 @@
   "degreeCentrality": "Центральность степени",
   "betweenessCentrality": "Центральность по посредничеству",
   "closenessCentrality": "Центральность по близости",
-  "eigenvectorCentrality":  "Центральность собственного вектора"
+  "eigenvectorCentrality": "Центральность собственного вектора",
+  "connectionType": "отношение",
+  "connectionStrength": "сила отношения"
 }

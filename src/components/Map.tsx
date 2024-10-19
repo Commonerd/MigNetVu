@@ -3,9 +3,9 @@ import {
   MapContainer,
   TileLayer,
   Marker,
-  Popup,
   Polyline,
   useMap,
+  Tooltip,
 } from "react-leaflet";
 import { useTranslation } from "react-i18next";
 import "leaflet/dist/leaflet.css";
@@ -133,6 +133,7 @@ const Map: React.FC = () => {
               [target.latitude, target.longitude],
               getConnectionColor(connection.type),
               connection.strength,
+              connection.type, // 커넥션 타입
             ]);
           }
         }
@@ -478,6 +479,7 @@ const Map: React.FC = () => {
         zoom={2}
         style={{ height: "calc(100% - 60px)", width: "100%" }}
       >
+        <Legend />
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -498,7 +500,7 @@ const Map: React.FC = () => {
                   iconSize: [size, size],
                 })}
               >
-                <Popup>
+                <Tooltip>
                   <h2 className="text-lg font-bold">{migrant.name}</h2>
                   <p>
                     {t("centrality")}: {centralityValues[migrant.id] || 0}
@@ -524,7 +526,7 @@ const Map: React.FC = () => {
                   <p>
                     {t("languagesSpoken")}: {migrant.languagesSpoken.join(", ")}
                   </p>
-                </Popup>
+                </Tooltip>
               </Marker>
             );
           })}
@@ -543,7 +545,7 @@ const Map: React.FC = () => {
                   iconSize: [size, size],
                 })}
               >
-                <Popup>
+                <Tooltip>
                   <div>
                     <h2 className="text-lg font-bold">{org.name}</h2>
                     <p>
@@ -562,20 +564,33 @@ const Map: React.FC = () => {
                       {t("contactInfo")}: {org.contactInfo}
                     </p>
                   </div>
-                </Popup>
+                </Tooltip>
               </Marker>
             );
           })}
-        {getEdges().map((edge, index) => (
-          <Polyline
-            key={index}
-            positions={edge.slice(0, 2) as unknown as [number, number][]}
-            color={edge[2] as unknown as string}
-            weight={2}
-            opacity={(edge[3] as unknown as number) * 0.16 + 0.2}
-          />
-        ))}
-        <Legend />
+        {getEdges().map((edge, index) => {
+          const positions = edge.slice(0, 2) as unknown as [number, number][];
+          const color = edge[2] as unknown as string;
+          const opacity = (edge[3] as unknown as number) * 0.16 + 0.2;
+
+          return (
+            <Polyline
+              key={index}
+              positions={positions}
+              color={color}
+              weight={2}
+              opacity={opacity}
+            >
+              <Tooltip>
+                <span>
+                  {`${t("connectionType")}: ${t(String(edge[4]))}`}
+                  <br />
+                  {`${t("connectionStrength")}: ${edge[3]}`}{" "}
+                </span>
+              </Tooltip>
+            </Polyline>
+          );
+        })}
       </MapContainer>
     </div>
   );

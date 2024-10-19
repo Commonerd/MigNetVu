@@ -50,6 +50,7 @@
   "degreeCentrality": "차수중심성",
   "betweenessCentrality": "매개중심성",
   "closenessCentrality": "근접중심성",
-  "eigenvectorCentrality": "고유벡터중심성"
-
+  "eigenvectorCentrality": "고유벡터중심성",
+  "connectionType": "관계",
+  "connectionStrength": "강도"
 }

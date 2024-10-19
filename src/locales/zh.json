@@ -43,6 +43,7 @@
   "degreeCentrality": "度数中心",
   "betweenessCentrality": "媒介中心性",
   "closenessCentrality": "近接中心性",
-  "eigenvectorCentrality":  "特征向量中心性"
-
+  "eigenvectorCentrality": "特征向量中心性",
+  "connectionType": "联系",
+  "connectionStrength": "強度"
 }
