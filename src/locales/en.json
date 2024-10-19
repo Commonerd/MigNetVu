@@ -46,9 +46,9 @@
   "mission": "Mission",
   "services": "Services",
   "contactInfo": "Contact Information",
-  "selectCentrality": "selectCentrality",
-  "degreeCentrality": "degreeCentrality",
-  "closenessCentrality": "clossnessCentrality"
-
-
+  "selectCentrality": "select centrality",
+  "degreeCentrality": "degree centrality",
+  "betweenessCentrality": "betweeness centrality",
+  "closenessCentrality": "clossness centrality",
+  "eigenvectorCentrality":  "eigenvector centrality"
 }

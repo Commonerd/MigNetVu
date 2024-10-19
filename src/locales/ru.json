@@ -41,5 +41,7 @@
   "cultural": "Культурный",
   "selectCentrality": "Выберите центральность",
   "degreeCentrality": "Центральность степени",
-  "closenessCentrality": "Центральность близости"
+  "betweenessCentrality": "Центральность по посредничеству",
+  "closenessCentrality": "Центральность по близости",
+  "eigenvectorCentrality":  "Центральность собственного вектора"
 }
