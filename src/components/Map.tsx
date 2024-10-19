@@ -179,7 +179,7 @@ const bfsShortestPath = (startId: number, connectionsMap: { [id: number]: number
 
 
 const calculateCentrality = () => {
-  const centrality: { [id: number]: number } = {};
+  let centrality: { [id: number]: number } = {};
   const connectionsMap: { [id: number]: number[] } = {};
 
   // Build a connections map
@@ -195,81 +195,124 @@ const calculateCentrality = () => {
         centrality[id] = connectionsMap[id].length;
       }
       break;
-      case "betweenness":
-        // Initialize betweenness centrality values to 0
-        for (const id in connectionsMap) {
-          centrality[id] = 0;
-        }
-  
-        // Calculate betweenness centrality for each node
-        for (const startId in connectionsMap) {
-          const shortestPaths: { [id: number]: number[][] } = {};
-          const distances: { [id: number]: number } = {};
-          const queue: number[] = [Number(startId)];
-          const predecessors: { [id: number]: number[] } = {};
-  
-          // Initialize distances and paths
-          Object.keys(connectionsMap).forEach((id) => {
-            distances[Number(id)] = Infinity;
-            shortestPaths[Number(id)] = [];
-            predecessors[Number(id)] = [];
-          });
-  
-          distances[Number(startId)] = 0;
-          shortestPaths[Number(startId)].push([Number(startId)]);
-  
-          // BFS to find shortest paths
-          while (queue.length > 0) {
-            const current = queue.shift()!;
-            connectionsMap[current].forEach((neighbor) => {
-              if (distances[neighbor] === Infinity) {
-                distances[neighbor] = distances[current] + 1;
-                queue.push(neighbor);
-              }
-              if (distances[neighbor] === distances[current] + 1) {
-                predecessors[neighbor].push(current);
-              }
-            });
-          }
-  
-          const dependency: { [id: number]: number } = {};
-  
-          Object.keys(predecessors).forEach((id) => {
-            dependency[Number(id)] = 0;
-          });
-  
-          // Accumulate dependencies by backtracking from each node
-          const nodes = Object.keys(predecessors).map(Number).sort((a, b) => distances[b] - distances[a]);
-  
-          nodes.forEach((w) => {
-            predecessors[w].forEach((v) => {
-              const fraction = (1 + dependency[w]) / predecessors[w].length;
-              dependency[v] += fraction;
-            });
-  
-            if (w !== Number(startId)) {
-              centrality[w] += dependency[w];
+
+    case "betweenness":
+      // Betweenness centrality implementation (as shown previously)
+      for (const id in connectionsMap) {
+        centrality[id] = 0;
+      }
+
+      for (const startId in connectionsMap) {
+        const shortestPaths: { [id: number]: number[][] } = {};
+        const distances: { [id: number]: number } = {};
+        const queue: number[] = [Number(startId)];
+        const predecessors: { [id: number]: number[] } = {};
+
+        Object.keys(connectionsMap).forEach((id) => {
+          distances[Number(id)] = Infinity;
+          shortestPaths[Number(id)] = [];
+          predecessors[Number(id)] = [];
+        });
+
+        distances[Number(startId)] = 0;
+        shortestPaths[Number(startId)].push([Number(startId)]);
+
+        while (queue.length > 0) {
+          const current = queue.shift()!;
+          connectionsMap[current].forEach((neighbor) => {
+            if (distances[neighbor] === Infinity) {
+              distances[neighbor] = distances[current] + 1;
+              queue.push(neighbor);
+            }
+            if (distances[neighbor] === distances[current] + 1) {
+              predecessors[neighbor].push(current);
             }
           });
         }
-  
-        // Normalize the betweenness centrality scores
-        const totalNodes = Object.keys(connectionsMap).length;
-        Object.keys(centrality).forEach((id) => {
-          centrality[Number(id)] /= (totalNodes - 1) * (totalNodes - 2);
+
+        const dependency: { [id: number]: number } = {};
+
+        Object.keys(predecessors).forEach((id) => {
+          dependency[Number(id)] = 0;
         });
-  
-        break;
+
+        const nodes = Object.keys(predecessors).map(Number).sort((a, b) => distances[b] - distances[a]);
+
+        nodes.forEach((w) => {
+          predecessors[w].forEach((v) => {
+            const fraction = (1 + dependency[w]) / predecessors[w].length;
+            dependency[v] += fraction;
+          });
+
+          if (w !== Number(startId)) {
+            centrality[w] += dependency[w];
+          }
+        });
+      }
+
+      const totalNodes = Object.keys(connectionsMap).length;
+      Object.keys(centrality).forEach((id) => {
+        centrality[Number(id)] /= (totalNodes - 1) * (totalNodes - 2);
+      });
+
+      break;
+
     case "closeness":
       for (const id in connectionsMap) {
         const distances = bfsShortestPath(Number(id), connectionsMap);
         const totalDistance = Object.values(distances).reduce((acc, d) => acc + d, 0);
-        centrality[id] = totalDistance > 0 ? 1 / totalDistance : 0; // Closeness formula
+        centrality[id] = totalDistance > 0 ? 1 / totalDistance : 0;
       }
       break;
+
     case "eigenvector":
-      // Implement Eigenvector Centrality calculation logic here
+      // Initialize eigenvector centrality values to 1
+      const numNodes = Object.keys(connectionsMap).length;
+      let eigenCentrality: { [id: number]: number } = {};
+      let prevEigenCentrality: { [id: number]: number } = {};
+
+      Object.keys(connectionsMap).forEach((id) => {
+        eigenCentrality[Number(id)] = 1;
+      });
+
+      const maxIterations = 100;
+      const tolerance = 1e-6;
+      let delta = Infinity;
+      let iterations = 0;
+
+      // Power iteration to calculate eigenvector centrality
+      while (delta > tolerance && iterations < maxIterations) {
+        prevEigenCentrality = { ...eigenCentrality };
+        delta = 0;
+
+        for (const id in connectionsMap) {
+          let sum = 0;
+          connectionsMap[Number(id)].forEach((neighbor) => {
+            sum += prevEigenCentrality[neighbor];
+          });
+          eigenCentrality[Number(id)] = sum;
+        }
+
+        // Normalize the eigenvector centrality values
+        const norm = Math.sqrt(
+          Object.values(eigenCentrality).reduce((acc, val) => acc + val * val, 0)
+        );
+        for (const id in eigenCentrality) {
+          eigenCentrality[Number(id)] /= norm;
+        }
+
+        // Calculate the delta (change) between iterations
+        Object.keys(eigenCentrality).forEach((id) => {
+          delta += Math.abs(eigenCentrality[Number(id)] - prevEigenCentrality[Number(id)]);
+        });
+
+        iterations++;
+      }
+
+      // Assign eigenvector centrality to the result
+      centrality = eigenCentrality;
       break;
+
     default:
       break;
   }
