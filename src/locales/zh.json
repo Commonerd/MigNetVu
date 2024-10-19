@@ -41,6 +41,8 @@
   "cultural": "文化",
   "selectCentrality": "选择中心性",
   "degreeCentrality": "度数中心",
-  "clossnessCentrality": "近接中心性"
+  "betweenessCentrality": "媒介中心性",
+  "closenessCentrality": "近接中心性",
+  "eigenvectorCentrality":  "特征向量中心性"
 
 }

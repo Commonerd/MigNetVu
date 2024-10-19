@@ -49,6 +49,6 @@
   "selectCentrality": "select centrality",
   "degreeCentrality": "degree centrality",
   "betweenessCentrality": "betweeness centrality",
-  "closenessCentrality": "clossness centrality",
-  "eigenvectorCentrality":  "eigenvector centrality"
+  "closenessCentrality": "closeness centrality",
+  "eigenvectorCentrality": "eigenvector centrality"
 }

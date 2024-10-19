@@ -451,7 +451,7 @@ const calculateCentrality = () => {
           >
             <option value="none">{t("selectCentrality")}</option>
             <option value="degree">{t("degreeCentrality")}</option>
-            <option value="betweenness">{t("betweennessCentrality")}</option>
+            <option value="betweenness">{t("betweenessCentrality")}</option>
             <option value="closeness">{t("closenessCentrality")}</option>
             <option value="eigenvector">{t("eigenvectorCentrality")}</option>
           </select>
