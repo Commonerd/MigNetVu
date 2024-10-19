@@ -31,7 +31,6 @@ L.Icon.Default.mergeOptions({
 });
 
 // 범례 컴포넌트 생성
-// 범례 컴포넌트 생성
 const Legend = () => {
   const map = useMap();
   const { t } = useTranslation(); // Use the translation hook
@@ -41,8 +40,16 @@ const Legend = () => {
 
     legend.onAdd = () => {
       const div = L.DomUtil.create("div", "info legend");
-      
+
+      // 70% 투명도 배경 적용
+      div.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
+      div.style.padding = "10px";
+      div.style.borderRadius = "5px";
+      div.style.boxShadow = "0 0 15px rgba(0, 0, 0, 0.2)";
+
       const labels = [
+        `<div style="display: inline-block; width: 15px; height: 15px; background-color: red; border-radius: 50%; margin-right: 5px;"></div> ${t("migrant")}`, // 이주자
+        `<div style="display: inline-block; width: 15px; height: 15px; background-color: blue; border-radius: 50%; margin-right: 5px;"></div> ${t("organization")}`, // 단체
         `<div style="display: inline-block; width: 15px; height: 15px; background-color: blue; margin-right: 5px;"></div> ${t("friend")}`,
         `<div style="display: inline-block; width: 15px; height: 15px; background-color: green; margin-right: 5px;"></div> ${t("colleague")}`,
         `<div style="display: inline-block; width: 15px; height: 15px; background-color: red; margin-right: 5px;"></div> ${t("family")}`,
@@ -63,6 +70,7 @@ const Legend = () => {
 
   return null;
 };
+
 
 
 const Map: React.FC = () => {
