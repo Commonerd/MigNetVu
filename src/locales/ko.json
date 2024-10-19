@@ -52,5 +52,6 @@
   "closenessCentrality": "근접중심성",
   "eigenvectorCentrality": "고유벡터중심성",
   "connectionType": "관계",
-  "connectionStrength": "강도"
+  "connectionStrength": "강도",
+  "topEntities": "중심성 TOP5"
 }

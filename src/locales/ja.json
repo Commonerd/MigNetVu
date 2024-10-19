@@ -45,5 +45,6 @@
   "closenessCentrality": "近接中心性",
   "eigenvectorCentrality": "固有ベクトル中心性",
   "connectionType": "関係",
-  "connectionStrength": "強度"
+  "connectionStrength": "強度",
+  "topEntities": "中心性 TOP5"
 }

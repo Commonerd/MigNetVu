@@ -31,7 +31,15 @@ L.Icon.Default.mergeOptions({
 });
 
 // 범례 컴포넌트 생성
-const Legend = () => {
+const Legend = ({
+  topEntities,
+  onEntityClick,
+  centralityType,
+}: {
+  topEntities: { id: number; name: string; centrality: number }[];
+  onEntityClick: (id: number) => void;
+  centralityType: string;
+}) => {
   const map = useMap();
   const { t } = useTranslation(); // Use the translation hook
 
@@ -58,15 +66,42 @@ const Legend = () => {
       ];
 
       div.innerHTML = labels.join("<br>");
+      // 중심성이 선택된 경우에만 상위 5개의 엔티티 표시
+      if (centralityType !== "none") {
+        const topEntitiesHtml = topEntities
+          .map(
+            (entity, index) =>
+              `<div style="cursor: pointer;" data-id="${entity.id}">${index + 1}. ${
+                entity.name
+              }: ${entity.centrality.toFixed(2)}</div>`,
+          )
+          .join("");
+        div.innerHTML += `<br><br><strong>${t(
+          "topEntities",
+        )}</strong><br>${topEntitiesHtml}`;
+      }
+
       return div;
     };
 
     legend.addTo(map);
 
+    // 클릭 이벤트 핸들러 추가
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const id = target.getAttribute("data-id");
+      if (id) {
+        onEntityClick(Number(id));
+      }
+    };
+
+    map.getContainer().addEventListener("click", handleClick);
+
     return () => {
+      map.getContainer().removeEventListener("click", handleClick);
       legend.remove();
     };
-  }, [map, t]); // Add `t` to the dependency array
+  }, [map, t, topEntities, centralityType, onEntityClick]);
 
   return null;
 };
@@ -83,11 +118,16 @@ const Map: React.FC = () => {
     yearRange: [1900, 2023],
   });
   const [centralityType, setCentralityType] = useState<string>("none");
+  const [highlightedNode, setHighlightedNode] = useState<number | null>(null);
 
   useEffect(() => {
     setMigrants(mockMigrants);
     setOrganizations(mockOrganizations);
   }, []);
+
+  const handleEntityClick = (id: number) => {
+    setHighlightedNode(id);
+  };
 
   const getEntityById = (
     id: number,
@@ -376,6 +416,21 @@ const Map: React.FC = () => {
 
   const centralityValues = calculateCentrality();
 
+  // 상위 5개의 엔티티 추출
+  const topEntities = Object.entries(centralityValues)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5)
+    .map(([id, centrality]) => {
+      const entity =
+        migrants.find((m) => m.id === Number(id)) ||
+        organizations.find((o) => o.id === Number(id));
+      return {
+        id: Number(id),
+        name: entity ? entity.name : "Unknown",
+        centrality,
+      };
+    });
+
   return (
     <div className="h-[calc(100vh-64px)]">
       <div className="p-4 bg-white">
@@ -479,7 +534,11 @@ const Map: React.FC = () => {
         zoom={2}
         style={{ height: "calc(100% - 60px)", width: "100%" }}
       >
-        <Legend />
+        <Legend
+          topEntities={topEntities}
+          onEntityClick={handleEntityClick}
+          centralityType={centralityType}
+        />
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -490,13 +549,17 @@ const Map: React.FC = () => {
               centralityType !== "none"
                 ? (centralityValues[migrant.id] || 0) * 5 + 10
                 : 10; // Degree 중심성에 따라 크기 조정
+            const isHighlighted = migrant.id === highlightedNode;
+
             return (
               <Marker
                 key={`migrant-${migrant.id}`}
                 position={[migrant.latitude, migrant.longitude]}
                 icon={L.divIcon({
                   className: "custom-marker",
-                  html: `<div style="width: ${size}px; height: ${size}px; background-color: red; border-radius: 50%;"></div>`, // Example of a circular marker
+                  html: `<div style="width: ${size}px; height: ${size}px; background-color: ${
+                    isHighlighted ? "yellow" : "red"
+                  }; border-radius: 50%;"></div>`, // Example of a circular marker
                   iconSize: [size, size],
                 })}
               >
@@ -535,13 +598,16 @@ const Map: React.FC = () => {
           filteredOrganizations.map((org) => {
             const size =
               centralityType !== "none" ? centralityValues[org.id] || 0 : 10; // Default size
+            const isHighlighted = org.id === highlightedNode;
             return (
               <Marker
                 key={`org-${org.id}`}
                 position={[org.latitude, org.longitude]}
                 icon={L.divIcon({
                   className: "custom-marker",
-                  html: `<div style="width: ${size}px; height: ${size}px; background-color: blue; border-radius: 50%;"></div>`, // Example of a circular marker
+                  html: `<div style="width: ${size}px; height: ${size}px; background-color: ${
+                    isHighlighted ? "yellow" : "blue"
+                  }; border-radius: 50%;"></div>`, // Example of a circular marker
                   iconSize: [size, size],
                 })}
               >

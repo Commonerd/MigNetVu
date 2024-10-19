@@ -52,5 +52,6 @@
   "closenessCentrality": "closeness centrality",
   "eigenvectorCentrality": "eigenvector centrality",
   "connectionType": "relashionship",
-  "connectionStrength": "strength of relashionship"
+  "connectionStrength": "strength of relashionship",
+  "topEntities": "Centrality TOP5"
 }

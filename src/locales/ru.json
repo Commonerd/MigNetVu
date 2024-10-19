@@ -45,5 +45,6 @@
   "closenessCentrality": "Центральность по близости",
   "eigenvectorCentrality": "Центральность собственного вектора",
   "connectionType": "отношение",
-  "connectionStrength": "сила отношения"
+  "connectionStrength": "сила отношения",
+  "topEntities": "Центральность TOP5"
 }
