@@ -453,6 +453,21 @@ const Map: React.FC = () => {
       };
     });
 
+  // 중심성에 따른 노드 크기를 계산하는 함수
+  const getNodeSize = (centrality: number, centralityType: string) => {
+    let baseSize = 10; // 기본 크기
+    let scaleFactor = 5; // 기존 로직의 배율
+
+    // 매개 중심성, 근접 중심성, 고유벡터 중심성에만 증폭
+    if (centralityType === "closeness" || centralityType === "eigenvector") {
+      scaleFactor = 30; // 값이 작을 때 증폭하기 위한 배율
+    } else if (centralityType === "betweenness") {
+      scaleFactor = 500; // 값이 작을 때 증폭하기 위한 배율
+    }
+
+    return Math.max(baseSize, centrality * scaleFactor + baseSize);
+  };
+
   return (
     <div className="h-[calc(100vh-64px)]">
       <div className="p-4 bg-white">
@@ -570,10 +585,11 @@ const Map: React.FC = () => {
         />
         {(filters.entityType === "all" || filters.entityType === "migrant") &&
           filteredMigrants.map((migrant) => {
-            const size =
-              centralityType !== "none"
-                ? (centralityValues[migrant.id] || 0) * 5 + 10
-                : 10; // Degree 중심성에 따라 크기 조정
+            const size = getNodeSize(
+              centralityValues[migrant.id] || 0,
+              centralityType,
+            ); // 중심성에 따른 크기 조정
+
             const isHighlighted = migrant.id === highlightedNode;
 
             return (
@@ -621,8 +637,10 @@ const Map: React.FC = () => {
         {(filters.entityType === "all" ||
           filters.entityType === "organization") &&
           filteredOrganizations.map((org) => {
-            const size =
-              centralityType !== "none" ? centralityValues[org.id] || 0 : 10; // Default size
+            const size = getNodeSize(
+              centralityValues[org.id] || 0,
+              centralityType,
+            ); // 중심성에 따른 크기 조정
             const isHighlighted = org.id === highlightedNode;
             return (
               <Marker
