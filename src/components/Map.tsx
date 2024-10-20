@@ -658,6 +658,9 @@ const Map: React.FC = () => {
                   <div>
                     <h2 className="text-lg font-bold">{org.name}</h2>
                     <p>
+                      {t("centrality")}: {centralityValues[org.id] || 0}
+                    </p>
+                    <p>
                       {t("foundationYear")}: {org.foundationYear}
                     </p>
                     <p>
