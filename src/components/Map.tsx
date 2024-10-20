@@ -19,6 +19,19 @@ import {
 } from "../types";
 import { mockMigrants, mockOrganizations } from "../mockData";
 
+// 중심 노드로 포커스 이동
+const FocusMap = ({ lat, lng }: { lat: number; lng: number }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (lat && lng) {
+      map.setView([lat, lng], 4, {
+        animate: true,
+      });
+    }
+  }, [lat, lng, map]);
+  return null;
+};
+
 // Fix Leaflet icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -119,6 +132,10 @@ const Map: React.FC = () => {
   });
   const [centralityType, setCentralityType] = useState<string>("none");
   const [highlightedNode, setHighlightedNode] = useState<number | null>(null);
+  const [focusedNode, setFocusedNode] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null); // 포커스된 노드의 위치 저장
 
   useEffect(() => {
     setMigrants(mockMigrants);
@@ -126,6 +143,11 @@ const Map: React.FC = () => {
   }, []);
 
   const handleEntityClick = (id: number) => {
+    const entity =
+      getEntityById(id, "migrant") || getEntityById(id, "organization");
+    if (entity) {
+      setFocusedNode({ lat: entity.latitude, lng: entity.longitude }); // 클릭한 엔티티의 위치로 포커스 이동
+    }
     setHighlightedNode((prevId) => (prevId === id ? null : id));
   };
 
@@ -534,6 +556,9 @@ const Map: React.FC = () => {
         zoom={2}
         style={{ height: "calc(100% - 60px)", width: "100%" }}
       >
+        {focusedNode && (
+          <FocusMap lat={focusedNode.lat} lng={focusedNode.lng} />
+        )}
         <Legend
           topEntities={topEntities}
           onEntityClick={handleEntityClick}
