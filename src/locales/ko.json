@@ -18,6 +18,7 @@
   "confirmPassword": "비밀번호 확인",
   "loginSuccess": "로그인 성공",
   "loginError": "로그인 실패",
+  "logoutSuccess": "로그아웃 성공",
   "registerSuccess": "회원가입 성공",
   "registerError": "회원가입 실패",
   "passwordMismatch": "비밀번호가 일치하지 않습니다",
@@ -54,5 +55,7 @@
   "connectionType": "관계",
   "connectionStrength": "강도",
   "topMigrants": "이주민 중심성 TOP5",
-  "topOrganizations": "단체 중심성 TOP5"
+  "topOrganizations": "단체 중심성 TOP5",
+  "logout": "로그아웃",
+  "welcome": "님, 마이그넷뷰에 오신 것을 환영합니다!"
 }

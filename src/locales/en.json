@@ -18,6 +18,7 @@
   "confirmPassword": "Confirm Password",
   "loginSuccess": "Logged in successfully",
   "loginError": "Login failed",
+  "logoutSuccess": "Logged Out successfully",
   "registerSuccess": "Registered successfully",
   "registerError": "Registration failed",
   "passwordMismatch": "Passwords do not match",
@@ -54,5 +55,7 @@
   "connectionType": "relashionship",
   "connectionStrength": "strength of relashionship",
   "topMigrants": "Migratns Centrality TOP5",
-  "topOrganizations": "Organizations Centrality TOP5"
+  "topOrganizations": "Organizations Centrality TOP5",
+  "logout": "Logout",
+  "welcome": ", welcome to MigNetVu!"
 }

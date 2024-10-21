@@ -18,6 +18,7 @@
   "confirmPassword": "Подтвердите пароль",
   "loginSuccess": "Вход выполнен успешно",
   "loginError": "Ошибка входа",
+  "logoutSuccess": "Выход выполнен успешно",
   "registerSuccess": "Регистрация прошла успешно",
   "registerError": "Ошибка регистрации",
   "passwordMismatch": "Пароли не совпадают",
@@ -47,5 +48,7 @@
   "connectionType": "отношение",
   "connectionStrength": "сила отношения",
   "topMigrants": "центральность мигранта ТОП5",
-  "topOrganizations": "Центрированность организаций ТОП5"
+  "topOrganizations": "Центрированность организаций ТОП5",
+  "logout": "выход из системы",
+  "welcome": ", добро пожаловать в MagnetView!"
 }

@@ -18,6 +18,7 @@
   "confirmPassword": "パスワード確認",
   "loginSuccess": "ログイン成功",
   "loginError": "ログイン失敗",
+  "logoutSuccess": "ログアウトに成功",
   "registerSuccess": "登録成功",
   "registerError": "登録失敗",
   "passwordMismatch": "パスワードが一致しません",
@@ -47,5 +48,7 @@
   "connectionType": "関係",
   "connectionStrength": "強度",
   "topMigrants": "移住者の中心性 TOP5",
-  "topOrganizations": "団体の中心性 TOP5"
+  "topOrganizations": "団体の中心性 TOP5",
+  "logout": "ログアウト",
+  "welcome": "様、MigNetVuへようこそ！"
 }

@@ -1,13 +1,28 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Globe, User, UserPlus } from "lucide-react";
+import { Globe, User, UserPlus, LogOut } from "lucide-react";
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  user: { email: string; isLoggedIn: boolean };
+  setUser: React.Dispatch<
+    React.SetStateAction<{ email: string; isLoggedIn: boolean }>
+  >;
+}
+
+const Header: React.FC<HeaderProps> = ({ user, setUser }) => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
+  };
+
+  const handleLogout = () => {
+    setUser({ email: "", isLoggedIn: false }); // 로그아웃 시 사용자 상태 초기화
+    sessionStorage.removeItem("isLoggedIn"); // 로그인 정보 삭제
+    alert(t("logoutSuccess"));
+    navigate("/"); // 로그아웃 후 홈으로 이동
   };
 
   return (
@@ -19,19 +34,40 @@ const Header: React.FC = () => {
         </Link>
         <nav>
           <ul className="flex space-x-4">
-            <li>
-              <Link to="/add-network">{t("addNetwork")}</Link>
-            </li>
-            <li>
-              <Link to="/login" className="flex items-center">
-                <User className="mr-1" /> {t("login")}
-              </Link>
-            </li>
-            <li>
-              <Link to="/register" className="flex items-center">
-                <UserPlus className="mr-1" /> {t("register")}
-              </Link>
-            </li>
+            {user.isLoggedIn ? (
+              <>
+                <li>
+                  <span className="mr-2">
+                    {user.email.split("@")[0]}
+                    {t("welcome")}
+                  </span>
+                </li>
+                <li>
+                  <Link to="/add-network" className="flex items-center">
+                    <UserPlus className="mr-1" />
+                    {t("addNetwork")}
+                  </Link>
+                </li>
+                <li>
+                  <button onClick={handleLogout} className="flex items-center">
+                    <LogOut className="mr-1" /> {t("logout")}
+                  </button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <Link to="/login" className="flex items-center">
+                    <User className="mr-1" /> {t("login")}
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/register" className="flex items-center">
+                    <UserPlus className="mr-1" /> {t("register")}
+                  </Link>
+                </li>
+              </>
+            )}
             <li>
               <select
                 onChange={(e) => changeLanguage(e.target.value)}

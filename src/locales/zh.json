@@ -20,6 +20,7 @@
   "loginError": "登录失败",
   "registerSuccess": "注册成功",
   "registerError": "注册失败",
+  "logoutSuccess": "成功注销",
   "passwordMismatch": "密码不匹配",
   "nationality": "国籍",
   "ethnicity": "民族",
@@ -47,5 +48,7 @@
   "connectionType": "联系",
   "connectionStrength": "強度",
   "topMigrants": "移民的中心性  TOP5",
-  "topOrganizations": "团体的中心性 TOP5"
+  "topOrganizations": "团体的中心性 TOP5",
+  "logout": "注销",
+  "welcome": "，欢迎访问 MigNetVu！"
 }
