@@ -514,7 +514,7 @@ const Map: React.FC = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-64px)]">
+    <div className="h-[calc(85vh-64px)]">
       <div className="p-4 bg-white">
         <div className="flex flex-wrap gap-4">
           <select

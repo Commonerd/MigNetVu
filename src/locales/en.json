@@ -1,8 +1,8 @@
 {
   "appName": "MigNetVu",
   "addNetwork": "Add Network",
-  "login": "Login",
-  "register": "Register",
+  "login": "Sign in",
+  "register": "Sign on",
   "population": "Population",
   "activities": "Activities",
   "allRightsReserved": "All rights reserved",
@@ -56,6 +56,6 @@
   "connectionStrength": "strength of relashionship",
   "topMigrants": "Migratns Centrality TOP5",
   "topOrganizations": "Organizations Centrality TOP5",
-  "logout": "Logout",
+  "logout": "Sign out",
   "welcome": ", welcome to MigNetVu!"
 }
