@@ -74,11 +74,11 @@ const Header: React.FC<HeaderProps> = ({ user, setUser }) => {
                 onChange={(e) => changeLanguage(e.target.value)}
                 className="bg-blue-500 text-white"
               >
-                <option value="ko">한국어</option>
                 <option value="en">English</option>
-                <option value="es">español</option>
+                <option value="ko">한국어</option>
                 <option value="ja">日本語</option>
                 <option value="ru">Русский</option>
+                <option value="es">español</option>
                 <option value="zh">中文</option>
               </select>
             </li>
