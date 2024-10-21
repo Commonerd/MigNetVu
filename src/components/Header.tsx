@@ -70,6 +70,7 @@ const Header: React.FC<HeaderProps> = ({ user, setUser }) => {
             )}
             <li>
               <select
+                value={i18n.language} // 현재 언어를 드롭다운의 기본값으로 설정
                 onChange={(e) => changeLanguage(e.target.value)}
                 className="bg-blue-500 text-white"
               >
