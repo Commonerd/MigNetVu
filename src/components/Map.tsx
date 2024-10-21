@@ -45,11 +45,13 @@ L.Icon.Default.mergeOptions({
 
 // 범례 컴포넌트 생성
 const Legend = ({
-  topEntities,
+  topMigrants,
+  topOrganizations,
   onEntityClick,
   centralityType,
 }: {
-  topEntities: { id: number; name: string; centrality: number }[];
+  topMigrants: { id: number; name: string; centrality: number }[];
+  topOrganizations: { id: number; name: string; centrality: number }[];
   onEntityClick: (id: number) => void;
   centralityType: string;
 }) => {
@@ -69,29 +71,54 @@ const Legend = ({
       div.style.boxShadow = "0 0 15px rgba(0, 0, 0, 0.2)";
 
       const labels = [
-        `<div style="display: inline-block; width: 15px; height: 15px; background-color: red; border-radius: 50%; margin-right: 5px;"></div> ${t("migrant")}`, // 이주자
-        `<div style="display: inline-block; width: 15px; height: 15px; background-color: blue; border-radius: 50%; margin-right: 5px;"></div> ${t("organization")}`, // 단체
-        `<div style="display: inline-block; width: 15px; height: 5px; background-color: blue; margin-right: 5px;"></div> ${t("friend")}`,
-        `<div style="display: inline-block; width: 15px; height: 5px; background-color: green; margin-right: 5px;"></div> ${t("colleague")}`,
-        `<div style="display: inline-block; width: 15px; height: 5px; background-color: red; margin-right: 5px;"></div> ${t("family")}`,
-        `<div style="display: inline-block; width: 15px; height: 5px; background-color: purple; margin-right: 5px;"></div> ${t("professional")}`,
-        `<div style="display: inline-block; width: 15px; height: 5px; background-color: orange; margin-right: 5px;"></div> ${t("cultural")}`,
+        `<div style="display: inline-block; width: 15px; height: 15px; background-color: red; border-radius: 50%; margin-right: 5px;"></div> ${t(
+          "migrant"
+        )}`, // 이주자
+        `<div style="display: inline-block; width: 15px; height: 15px; background-color: blue; border-radius: 50%; margin-right: 5px;"></div> ${t(
+          "organization"
+        )}`, // 단체
+        `<div style="display: inline-block; width: 15px; height: 5px; background-color: blue; margin-right: 5px;"></div> ${t(
+          "friend"
+        )}`,
+        `<div style="display: inline-block; width: 15px; height: 5px; background-color: green; margin-right: 5px;"></div> ${t(
+          "colleague"
+        )}`,
+        `<div style="display: inline-block; width: 15px; height: 5px; background-color: red; margin-right: 5px;"></div> ${t(
+          "family"
+        )}`,
+        `<div style="display: inline-block; width: 15px; height: 5px; background-color: purple; margin-right: 5px;"></div> ${t(
+          "professional"
+        )}`,
+        `<div style="display: inline-block; width: 15px; height: 5px; background-color: orange; margin-right: 5px;"></div> ${t(
+          "cultural"
+        )}`,
       ];
 
       div.innerHTML = labels.join("<br>");
       // 중심성이 선택된 경우에만 상위 5개의 엔티티 표시
       if (centralityType !== "none") {
-        const topEntitiesHtml = topEntities
+        const topMigrantsHtml = topMigrants
           .map(
             (entity, index) =>
-              `<div style="cursor: pointer;" data-id="${entity.id}">${index + 1}. ${
-                entity.name
-              }: ${entity.centrality.toFixed(2)}</div>`,
+              `<div style="cursor: pointer;" data-id="${entity.id}">${
+                index + 1
+              }. ${entity.name}: ${entity.centrality.toFixed(2)}</div>`
+          )
+          .join("");
+        const topOrganizationsHtml = topOrganizations
+          .map(
+            (entity, index) =>
+              `<div style="cursor: pointer;" data-id="${entity.id}">${
+                index + 1
+              }. ${entity.name}: ${entity.centrality.toFixed(2)}</div>`
           )
           .join("");
         div.innerHTML += `<br><br><strong>${t(
-          "topEntities",
-        )}</strong><br>${topEntitiesHtml}`;
+          "topMigrants"
+        )}</strong><br>${topMigrantsHtml}`;
+        div.innerHTML += `<br><br><strong>${t(
+          "topOrganizations"
+        )}</strong><br>${topOrganizationsHtml}`;
       }
 
       return div;
@@ -114,7 +141,7 @@ const Legend = ({
       map.getContainer().removeEventListener("click", handleClick);
       legend.remove();
     };
-  }, [map, t, topEntities, centralityType, onEntityClick]);
+  }, [map, t, topMigrants, topOrganizations, centralityType, onEntityClick]);
 
   return null;
 };
@@ -153,7 +180,7 @@ const Map: React.FC = () => {
 
   const getEntityById = (
     id: number,
-    type: EntityType,
+    type: EntityType
   ): Migrant | Organization | undefined => {
     return type === "migrant"
       ? migrants.find((m) => m.id === id)
@@ -187,7 +214,7 @@ const Map: React.FC = () => {
         ) {
           const target = getEntityById(
             connection.targetId,
-            connection.targetType,
+            connection.targetType
           );
           if (target) {
             edges.push([
@@ -233,7 +260,7 @@ const Map: React.FC = () => {
 
   const handleFilterChange = (
     key: keyof FilterOptions,
-    value: string | number[],
+    value: string | number[]
   ) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
@@ -245,26 +272,26 @@ const Map: React.FC = () => {
       (filters.ethnicity === "all" ||
         migrant.ethnicity === filters.ethnicity) &&
       migrant.migrationYear >= filters.yearRange[0] &&
-      migrant.migrationYear <= filters.yearRange[1],
+      migrant.migrationYear <= filters.yearRange[1]
   );
 
   const filteredOrganizations = organizations.filter(
     (org) =>
       org.foundationYear >= filters.yearRange[0] &&
-      org.foundationYear <= filters.yearRange[1],
+      org.foundationYear <= filters.yearRange[1]
   );
 
   const uniqueNationalities = Array.from(
-    new Set(migrants.map((m) => m.nationality)),
+    new Set(migrants.map((m) => m.nationality))
   );
   const uniqueEthnicities = Array.from(
-    new Set(migrants.map((m) => m.ethnicity)),
+    new Set(migrants.map((m) => m.ethnicity))
   );
 
   // Utility function to calculate shortest path using BFS
   const bfsShortestPath = (
     startId: number,
-    connectionsMap: { [id: number]: number[] },
+    connectionsMap: { [id: number]: number[] }
   ) => {
     const queue: [number, number][] = [[startId, 0]]; // [nodeId, distance]
     const distances: { [id: number]: number } = { [startId]: 0 };
@@ -291,7 +318,7 @@ const Map: React.FC = () => {
     // Build a connections map
     [...migrants, ...organizations].forEach((entity) => {
       connectionsMap[entity.id] = entity.connections.map(
-        (connection) => connection.targetId,
+        (connection) => connection.targetId
       );
     });
 
@@ -370,7 +397,7 @@ const Map: React.FC = () => {
           const distances = bfsShortestPath(Number(id), connectionsMap);
           const totalDistance = Object.values(distances).reduce(
             (acc, d) => acc + d,
-            0,
+            0
           );
           centrality[id] = totalDistance > 0 ? 1 / totalDistance : 0;
         }
@@ -408,8 +435,8 @@ const Map: React.FC = () => {
           const norm = Math.sqrt(
             Object.values(eigenCentrality).reduce(
               (acc, val) => acc + val * val,
-              0,
-            ),
+              0
+            )
           );
           for (const id in eigenCentrality) {
             eigenCentrality[Number(id)] /= norm;
@@ -418,7 +445,7 @@ const Map: React.FC = () => {
           // Calculate the delta (change) between iterations
           Object.keys(eigenCentrality).forEach((id) => {
             delta += Math.abs(
-              eigenCentrality[Number(id)] - prevEigenCentrality[Number(id)],
+              eigenCentrality[Number(id)] - prevEigenCentrality[Number(id)]
             );
           });
 
@@ -438,17 +465,29 @@ const Map: React.FC = () => {
 
   const centralityValues = calculateCentrality();
 
-  // 상위 5개의 엔티티 추출
-  const topEntities = Object.entries(centralityValues)
+  // 상위 5개의 이주자와 단체를 각각 추출
+  const topMigrants = Object.entries(centralityValues)
+    .filter(([id]) => migrants.some((m) => m.id === Number(id)))
     .sort(([, a], [, b]) => b - a)
     .slice(0, 5)
     .map(([id, centrality]) => {
-      const entity =
-        migrants.find((m) => m.id === Number(id)) ||
-        organizations.find((o) => o.id === Number(id));
+      const migrant = migrants.find((m) => m.id === Number(id));
       return {
         id: Number(id),
-        name: entity ? entity.name : "Unknown",
+        name: migrant ? migrant.name : "Unknown",
+        centrality,
+      };
+    });
+
+  const topOrganizations = Object.entries(centralityValues)
+    .filter(([id]) => organizations.some((o) => o.id === Number(id)))
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5)
+    .map(([id, centrality]) => {
+      const organization = organizations.find((o) => o.id === Number(id));
+      return {
+        id: Number(id),
+        name: organization ? organization.name : "Unknown",
         centrality,
       };
     });
@@ -575,7 +614,8 @@ const Map: React.FC = () => {
           <FocusMap lat={focusedNode.lat} lng={focusedNode.lng} />
         )}
         <Legend
-          topEntities={topEntities}
+          topMigrants={topMigrants}
+          topOrganizations={topOrganizations}
           onEntityClick={handleEntityClick}
           centralityType={centralityType}
         />
@@ -587,7 +627,7 @@ const Map: React.FC = () => {
           filteredMigrants.map((migrant) => {
             const size = getNodeSize(
               centralityValues[migrant.id] || 0,
-              centralityType,
+              centralityType
             ); // 중심성에 따른 크기 조정
 
             const isHighlighted = migrant.id === highlightedNode;
@@ -639,7 +679,7 @@ const Map: React.FC = () => {
           filteredOrganizations.map((org) => {
             const size = getNodeSize(
               centralityValues[org.id] || 0,
-              centralityType,
+              centralityType
             ); // 중심성에 따른 크기 조정
             const isHighlighted = org.id === highlightedNode;
             return (
