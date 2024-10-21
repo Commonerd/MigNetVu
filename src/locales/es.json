@@ -53,5 +53,6 @@
   "eigenvectorCentrality": "centralidad de vector propio",
   "connectionType": "relación",
   "connectionStrength": "fuerza de relación",
-  "topEntities": "Centralidad TOP5"
+  "topMigrantes": "Centralidad de Migratns TOP5",
+  "topOrganizations": "Organizaciones Centralidad TOP5"
 }

@@ -52,11 +52,11 @@ const Legend = ({
 }: {
   topMigrants: { id: number; name: string; centrality: number }[];
   topOrganizations: { id: number; name: string; centrality: number }[];
-  onEntityClick: (id: number) => void;
+  onEntityClick: (id: number, type: EntityType) => void;
   centralityType: string;
 }) => {
   const map = useMap();
-  const { t } = useTranslation(); // Use the translation hook
+  const { t } = useTranslation();
 
   useEffect(() => {
     const legend = L.control({ position: "topright" });
@@ -64,7 +64,6 @@ const Legend = ({
     legend.onAdd = () => {
       const div = L.DomUtil.create("div", "info legend");
 
-      // 70% 투명도 배경 적용
       div.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
       div.style.padding = "10px";
       div.style.borderRadius = "5px";
@@ -72,52 +71,51 @@ const Legend = ({
 
       const labels = [
         `<div style="display: inline-block; width: 15px; height: 15px; background-color: red; border-radius: 50%; margin-right: 5px;"></div> ${t(
-          "migrant"
-        )}`, // 이주자
+          "migrant",
+        )}`,
         `<div style="display: inline-block; width: 15px; height: 15px; background-color: blue; border-radius: 50%; margin-right: 5px;"></div> ${t(
-          "organization"
-        )}`, // 단체
+          "organization",
+        )}`,
         `<div style="display: inline-block; width: 15px; height: 5px; background-color: blue; margin-right: 5px;"></div> ${t(
-          "friend"
+          "friend",
         )}`,
         `<div style="display: inline-block; width: 15px; height: 5px; background-color: green; margin-right: 5px;"></div> ${t(
-          "colleague"
+          "colleague",
         )}`,
         `<div style="display: inline-block; width: 15px; height: 5px; background-color: red; margin-right: 5px;"></div> ${t(
-          "family"
+          "family",
         )}`,
         `<div style="display: inline-block; width: 15px; height: 5px; background-color: purple; margin-right: 5px;"></div> ${t(
-          "professional"
+          "professional",
         )}`,
         `<div style="display: inline-block; width: 15px; height: 5px; background-color: orange; margin-right: 5px;"></div> ${t(
-          "cultural"
+          "cultural",
         )}`,
       ];
 
       div.innerHTML = labels.join("<br>");
-      // 중심성이 선택된 경우에만 상위 5개의 엔티티 표시
       if (centralityType !== "none") {
         const topMigrantsHtml = topMigrants
           .map(
             (entity, index) =>
-              `<div style="cursor: pointer;" data-id="${entity.id}">${
+              `<div style="cursor: pointer;" data-id="${entity.id}" data-type="migrant">${
                 index + 1
-              }. ${entity.name}: ${entity.centrality.toFixed(2)}</div>`
+              }. ${entity.name}: ${entity.centrality.toFixed(2)}</div>`,
           )
           .join("");
         const topOrganizationsHtml = topOrganizations
           .map(
             (entity, index) =>
-              `<div style="cursor: pointer;" data-id="${entity.id}">${
+              `<div style="cursor: pointer;" data-id="${entity.id}" data-type="organization">${
                 index + 1
-              }. ${entity.name}: ${entity.centrality.toFixed(2)}</div>`
+              }. ${entity.name}: ${entity.centrality.toFixed(2)}</div>`,
           )
           .join("");
         div.innerHTML += `<br><br><strong>${t(
-          "topMigrants"
+          "topMigrants",
         )}</strong><br>${topMigrantsHtml}`;
-        div.innerHTML += `<br><br><strong>${t(
-          "topOrganizations"
+        div.innerHTML += `<br><strong>${t(
+          "topOrganizations",
         )}</strong><br>${topOrganizationsHtml}`;
       }
 
@@ -126,12 +124,12 @@ const Legend = ({
 
     legend.addTo(map);
 
-    // 클릭 이벤트 핸들러 추가
     const handleClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       const id = target.getAttribute("data-id");
-      if (id) {
-        onEntityClick(Number(id));
+      const type = target.getAttribute("data-type") as EntityType;
+      if (id && type) {
+        onEntityClick(Number(id), type);
       }
     };
 
@@ -158,29 +156,36 @@ const Map: React.FC = () => {
     yearRange: [1900, 2023],
   });
   const [centralityType, setCentralityType] = useState<string>("none");
-  const [highlightedNode, setHighlightedNode] = useState<number | null>(null);
+  const [highlightedNode, setHighlightedNode] = useState<{
+    id: number;
+    type: EntityType;
+  } | null>(null);
   const [focusedNode, setFocusedNode] = useState<{
     lat: number;
     lng: number;
-  } | null>(null); // 포커스된 노드의 위치 저장
+  } | null>(null);
 
   useEffect(() => {
     setMigrants(mockMigrants);
     setOrganizations(mockOrganizations);
   }, []);
 
-  const handleEntityClick = (id: number) => {
-    const entity =
-      getEntityById(id, "migrant") || getEntityById(id, "organization");
+  const handleEntityClick = (id: number, type: EntityType) => {
+    const entity = getEntityById(id, type);
     if (entity) {
-      setFocusedNode({ lat: entity.latitude, lng: entity.longitude }); // 클릭한 엔티티의 위치로 포커스 이동
+      setFocusedNode({ lat: entity.latitude, lng: entity.longitude });
     }
-    setHighlightedNode((prevId) => (prevId === id ? null : id));
+    setHighlightedNode((prev) => {
+      if (prev && prev.id === id && prev.type === type) {
+        return null;
+      }
+      return { id, type };
+    });
   };
 
   const getEntityById = (
     id: number,
-    type: EntityType
+    type: EntityType,
   ): Migrant | Organization | undefined => {
     return type === "migrant"
       ? migrants.find((m) => m.id === id)
@@ -214,7 +219,7 @@ const Map: React.FC = () => {
         ) {
           const target = getEntityById(
             connection.targetId,
-            connection.targetType
+            connection.targetType,
           );
           if (target) {
             edges.push([
@@ -222,7 +227,7 @@ const Map: React.FC = () => {
               [target.latitude, target.longitude],
               getConnectionColor(connection.type),
               connection.strength,
-              connection.type, // 커넥션 타입
+              connection.type,
             ]);
           }
         }
@@ -260,7 +265,7 @@ const Map: React.FC = () => {
 
   const handleFilterChange = (
     key: keyof FilterOptions,
-    value: string | number[]
+    value: string | number[],
   ) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
@@ -272,26 +277,25 @@ const Map: React.FC = () => {
       (filters.ethnicity === "all" ||
         migrant.ethnicity === filters.ethnicity) &&
       migrant.migrationYear >= filters.yearRange[0] &&
-      migrant.migrationYear <= filters.yearRange[1]
+      migrant.migrationYear <= filters.yearRange[1],
   );
 
   const filteredOrganizations = organizations.filter(
     (org) =>
       org.foundationYear >= filters.yearRange[0] &&
-      org.foundationYear <= filters.yearRange[1]
+      org.foundationYear <= filters.yearRange[1],
   );
 
   const uniqueNationalities = Array.from(
-    new Set(migrants.map((m) => m.nationality))
+    new Set(migrants.map((m) => m.nationality)),
   );
   const uniqueEthnicities = Array.from(
-    new Set(migrants.map((m) => m.ethnicity))
+    new Set(migrants.map((m) => m.ethnicity)),
   );
-
   // Utility function to calculate shortest path using BFS
   const bfsShortestPath = (
     startId: number,
-    connectionsMap: { [id: number]: number[] }
+    connectionsMap: { [id: number]: number[] },
   ) => {
     const queue: [number, number][] = [[startId, 0]]; // [nodeId, distance]
     const distances: { [id: number]: number } = { [startId]: 0 };
@@ -318,7 +322,7 @@ const Map: React.FC = () => {
     // Build a connections map
     [...migrants, ...organizations].forEach((entity) => {
       connectionsMap[entity.id] = entity.connections.map(
-        (connection) => connection.targetId
+        (connection) => connection.targetId,
       );
     });
 
@@ -397,7 +401,7 @@ const Map: React.FC = () => {
           const distances = bfsShortestPath(Number(id), connectionsMap);
           const totalDistance = Object.values(distances).reduce(
             (acc, d) => acc + d,
-            0
+            0,
           );
           centrality[id] = totalDistance > 0 ? 1 / totalDistance : 0;
         }
@@ -435,8 +439,8 @@ const Map: React.FC = () => {
           const norm = Math.sqrt(
             Object.values(eigenCentrality).reduce(
               (acc, val) => acc + val * val,
-              0
-            )
+              0,
+            ),
           );
           for (const id in eigenCentrality) {
             eigenCentrality[Number(id)] /= norm;
@@ -445,7 +449,7 @@ const Map: React.FC = () => {
           // Calculate the delta (change) between iterations
           Object.keys(eigenCentrality).forEach((id) => {
             delta += Math.abs(
-              eigenCentrality[Number(id)] - prevEigenCentrality[Number(id)]
+              eigenCentrality[Number(id)] - prevEigenCentrality[Number(id)],
             );
           });
 
@@ -465,7 +469,6 @@ const Map: React.FC = () => {
 
   const centralityValues = calculateCentrality();
 
-  // 상위 5개의 이주자와 단체를 각각 추출
   const topMigrants = Object.entries(centralityValues)
     .filter(([id]) => migrants.some((m) => m.id === Number(id)))
     .sort(([, a], [, b]) => b - a)
@@ -492,16 +495,14 @@ const Map: React.FC = () => {
       };
     });
 
-  // 중심성에 따른 노드 크기를 계산하는 함수
   const getNodeSize = (centrality: number, centralityType: string) => {
-    let baseSize = 10; // 기본 크기
-    let scaleFactor = 5; // 기존 로직의 배율
+    let baseSize = 10;
+    let scaleFactor = 5;
 
-    // 매개 중심성, 근접 중심성, 고유벡터 중심성에만 증폭
     if (centralityType === "closeness" || centralityType === "eigenvector") {
-      scaleFactor = 30; // 값이 작을 때 증폭하기 위한 배율
+      scaleFactor = 30;
     } else if (centralityType === "betweenness") {
-      scaleFactor = 500; // 값이 작을 때 증폭하기 위한 배율
+      scaleFactor = 500;
     }
 
     return Math.max(baseSize, centrality * scaleFactor + baseSize);
@@ -627,10 +628,13 @@ const Map: React.FC = () => {
           filteredMigrants.map((migrant) => {
             const size = getNodeSize(
               centralityValues[migrant.id] || 0,
-              centralityType
-            ); // 중심성에 따른 크기 조정
+              centralityType,
+            );
 
-            const isHighlighted = migrant.id === highlightedNode;
+            const isHighlighted =
+              highlightedNode &&
+              highlightedNode.id === migrant.id &&
+              highlightedNode.type === "migrant";
 
             return (
               <Marker
@@ -640,7 +644,7 @@ const Map: React.FC = () => {
                   className: "custom-marker",
                   html: `<div style="width: ${size}px; height: ${size}px; background-color: ${
                     isHighlighted ? "yellow" : "red"
-                  }; border-radius: 50%;"></div>`, // Example of a circular marker
+                  }; border-radius: 50%;"></div>`,
                   iconSize: [size, size],
                 })}
               >
@@ -679,9 +683,12 @@ const Map: React.FC = () => {
           filteredOrganizations.map((org) => {
             const size = getNodeSize(
               centralityValues[org.id] || 0,
-              centralityType
-            ); // 중심성에 따른 크기 조정
-            const isHighlighted = org.id === highlightedNode;
+              centralityType,
+            );
+            const isHighlighted =
+              highlightedNode &&
+              highlightedNode.id === org.id &&
+              highlightedNode.type === "organization";
             return (
               <Marker
                 key={`org-${org.id}`}
@@ -690,7 +697,7 @@ const Map: React.FC = () => {
                   className: "custom-marker",
                   html: `<div style="width: ${size}px; height: ${size}px; background-color: ${
                     isHighlighted ? "yellow" : "blue"
-                  }; border-radius: 50%;"></div>`, // Example of a circular marker
+                  }; border-radius: 50%;"></div>`,
                   iconSize: [size, size],
                 })}
               >

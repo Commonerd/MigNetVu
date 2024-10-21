@@ -46,5 +46,6 @@
   "eigenvectorCentrality": "特征向量中心性",
   "connectionType": "联系",
   "connectionStrength": "強度",
-  "topEntities": "中心性 TOP5"
+  "topMigrants": "移民的中心性  TOP5",
+  "topOrganizations": "团体的中心性 TOP5"
 }

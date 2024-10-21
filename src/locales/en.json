@@ -53,5 +53,6 @@
   "eigenvectorCentrality": "eigenvector centrality",
   "connectionType": "relashionship",
   "connectionStrength": "strength of relashionship",
-  "topEntities": "Centrality TOP5"
+  "topMigrants": "Migratns Centrality TOP5",
+  "topOrganizations": "Organizations Centrality TOP5"
 }

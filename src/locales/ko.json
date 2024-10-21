@@ -53,5 +53,6 @@
   "eigenvectorCentrality": "고유벡터중심성",
   "connectionType": "관계",
   "connectionStrength": "강도",
-  "topEntities": "중심성 TOP5"
+  "topMigrants": "이주민 중심성 TOP5",
+  "topOrganizations": "단체 중심성 TOP5"
 }

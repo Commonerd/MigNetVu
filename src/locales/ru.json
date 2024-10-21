@@ -46,5 +46,6 @@
   "eigenvectorCentrality": "Центральность собственного вектора",
   "connectionType": "отношение",
   "connectionStrength": "сила отношения",
-  "topEntities": "Центральность TOP5"
+  "topMigrants": "центральность мигранта ТОП5",
+  "topOrganizations": "Центрированность организаций ТОП5"
 }

@@ -26,8 +26,8 @@
   "migrationYear": "移住年",
   "foundationYear": "設立年",
   "type": "タイプ",
-  "migrant": "移民",
-  "organization": "組織",
+  "migrant": "移住者",
+  "organization": "団体",
   "entityType": "エンティティタイプ",
   "allNationalities": "すべての国籍",
   "allEthnicities": "すべての民族",
@@ -46,5 +46,6 @@
   "eigenvectorCentrality": "固有ベクトル中心性",
   "connectionType": "関係",
   "connectionStrength": "強度",
-  "topEntities": "中心性 TOP5"
+  "topMigrants": "移住者の中心性 TOP5",
+  "topOrganizations": "団体の中心性 TOP5"
 }
