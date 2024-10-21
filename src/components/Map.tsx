@@ -499,7 +499,12 @@ const Map: React.FC = () => {
     let baseSize = 10;
     let scaleFactor = 5;
 
-    if (centralityType === "closeness" || centralityType === "eigenvector") {
+    if (centralityType === "degree") {
+      scaleFactor = 3;
+    } else if (
+      centralityType === "closeness" ||
+      centralityType === "eigenvector"
+    ) {
       scaleFactor = 30;
     } else if (centralityType === "betweenness") {
       scaleFactor = 500;
