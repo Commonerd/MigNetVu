@@ -18,7 +18,7 @@ const languageCode = userLanguage.split("-")[0]; // 'en', 'ko' 등
 // 지원하는 언어인지 확인하고 기본 언어로 설정
 const defaultLanguage = supportedLanguages.includes(languageCode)
   ? languageCode
-  : "ko"; // 기본값은 한국어
+  : "en"; // 기본값은 한국어
 
 i18n.use(initReactI18next).init({
   resources: {
