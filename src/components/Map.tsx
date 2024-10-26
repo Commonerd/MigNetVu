@@ -671,6 +671,7 @@ const Map: React.FC<MapProps> = ({ user }) => {
               >
                 <Tooltip>
                   <h2 className="text-lg font-bold">{migrant.name}</h2>
+                  <p>id : {migrant.id} </p>
                   <p>
                     {t("centrality")}: {centralityValues[migrant.id] || 0}
                   </p>
@@ -725,6 +726,7 @@ const Map: React.FC<MapProps> = ({ user }) => {
                 <Tooltip>
                   <div>
                     <h2 className="text-lg font-bold">{org.name}</h2>
+                    <p>id: {org.id} </p>
                     <p>
                       {t("centrality")}: {centralityValues[org.id] || 0}
                     </p>
