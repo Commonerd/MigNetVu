@@ -1,5 +1,6 @@
 {
   "appName": "MigNetVu",
+  "appSubName": "Миграционные сети от прошлого к настоящему",
   "addNetwork": "Добавить сеть",
   "login": "Вход",
   "register": "Регистрация",

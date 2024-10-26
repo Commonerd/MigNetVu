@@ -1,5 +1,6 @@
 {
   "appName": "MigNetVu",
+  "appSubName": "Redes migratorias del pasado al presente",
   "addNetwork": "Agregar Red",
   "login": "Iniciar Sesión",
   "register": "Registrarse",

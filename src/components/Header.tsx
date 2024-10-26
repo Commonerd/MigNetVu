@@ -30,7 +30,8 @@ const Header: React.FC<HeaderProps> = ({ user, setUser }) => {
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center">
           <Globe className="mr-2" />
-          <span className="text-xl font-bold">MigNetVu</span>
+          <span className="text-xl font-bold">MigNetVu </span>
+          <span className="text-sm font-bold">　{t("appSubName")} </span>
         </Link>
         <nav>
           <ul className="flex space-x-4">
