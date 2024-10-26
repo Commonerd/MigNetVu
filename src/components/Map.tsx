@@ -19,6 +19,13 @@ import {
 } from "../types";
 import { mockMigrants, mockOrganizations } from "../mockData";
 
+interface MapProps {
+  user: { email: string; isLoggedIn: boolean };
+  setUser: React.Dispatch<
+    React.SetStateAction<{ email: string; isLoggedIn: boolean }>
+  >;
+}
+
 // 중심 노드로 포커스 이동
 const FocusMap = ({ lat, lng }: { lat: number; lng: number }) => {
   const map = useMap();
@@ -144,7 +151,7 @@ const Legend = ({
   return null;
 };
 
-const Map: React.FC = () => {
+const Map: React.FC<MapProps> = ({ user }) => {
   const { t } = useTranslation();
   const [migrants, setMigrants] = useState<Migrant[]>([]);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -598,17 +605,26 @@ const Map: React.FC = () => {
               className="w-20 p-2 border rounded"
             />
           </div>
-          <select
-            value={centralityType}
-            onChange={(e) => setCentralityType(e.target.value)}
-            className="p-2 border rounded"
-          >
-            <option value="none">{t("selectCentrality")}</option>
-            <option value="degree">{t("degreeCentrality")}</option>
-            <option value="betweenness">{t("betweenessCentrality")}</option>
-            <option value="closeness">{t("closenessCentrality")}</option>
-            <option value="eigenvector">{t("eigenvectorCentrality")}</option>
-          </select>
+          {user.isLoggedIn ? (
+            <>
+              {" "}
+              <select
+                value={centralityType}
+                onChange={(e) => setCentralityType(e.target.value)}
+                className="p-2 border rounded"
+              >
+                <option value="none">{t("selectCentrality")}</option>
+                <option value="degree">{t("degreeCentrality")}</option>
+                <option value="betweenness">{t("betweenessCentrality")}</option>
+                <option value="closeness">{t("closenessCentrality")}</option>
+                <option value="eigenvector">
+                  {t("eigenvectorCentrality")}
+                </option>
+              </select>
+            </>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
       <MapContainer

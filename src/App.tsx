@@ -22,10 +22,10 @@ const App: React.FC = () => {
         <Header user={user} setUser={setUser} />{" "}
         <main className="flex-grow">
           <Routes>
-            <Route path="/" element={<Map />} />
+            <Route path="/" element={<Map user={user} setUser={setUser} />} />
             <Route path="/add-network" element={<NetworkForm />} />
             <Route path="/login" element={<Login setUser={setUser} />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/register" element={<Register setUser={setUser} />} />
           </Routes>
         </main>
         <Footer />
