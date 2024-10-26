@@ -61,5 +61,8 @@
   "topMigrants": "Migratns Centrality TOP5",
   "topOrganizations": "Organizations Centrality TOP5",
   "logout": "Sign out",
-  "welcome": ", welcome to MigNetVu!"
+  "welcome": ", welcome to MigNetVu!",
+  "registrantId": "Registrant",
+  "topRegistrants": "Node Registration Contributors Top3 ",
+  "nodeCount": "Nodes"
 }

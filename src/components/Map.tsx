@@ -18,6 +18,8 @@ import {
   FilterOptions,
 } from "../types";
 import { mockMigrants, mockOrganizations } from "../mockData";
+import { members } from "../members";
+import styled from "styled-components";
 
 interface MapProps {
   user: { email: string; isLoggedIn: boolean };
@@ -520,8 +522,45 @@ const Map: React.FC<MapProps> = ({ user }) => {
     return Math.max(baseSize, centrality * scaleFactor + baseSize);
   };
 
+  // 등록자별 노드 수 계산
+  const registrantNodeCounts = [...migrants, ...organizations].reduce(
+    (acc, entity) => {
+      acc[entity.registrantId] = (acc[entity.registrantId] || 0) + 1;
+      return acc;
+    },
+    {} as { [registrantId: number]: number },
+  );
+
+  // 등록자 이름을 매핑하는 함수
+  const getRegistrantName = (id: number) => {
+    const registrant = members.find((r) => r.id === id);
+    return registrant ? registrant?.name : "Unknown";
+  };
+
+  // 상위 3명의 등록자 추출 및 정렬
+  const topRegistrants = Object.entries(registrantNodeCounts)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 3)
+    .map(([registrantId, count], index) => ({
+      registrantId: Number(registrantId),
+      name: getRegistrantName(Number(registrantId)),
+      count,
+      medal: index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉",
+    }));
+
   return (
-    <div className="h-[calc(85vh-64px)]">
+    <div className="h-[calc(85vh-64px)] relative">
+      <LegendBox>
+        <h2>{t("topRegistrants")}</h2>
+        <ul>
+          {topRegistrants.map((registrant) => (
+            <li key={registrant.registrantId}>
+              {registrant.medal} {registrant.name} : {registrant.count}{" "}
+              {t("nodeCount")}
+            </li>
+          ))}
+        </ul>
+      </LegendBox>
       <div className="p-4 bg-white">
         <div className="flex flex-wrap gap-4">
           <select
@@ -673,6 +712,9 @@ const Map: React.FC<MapProps> = ({ user }) => {
                   <h2 className="text-lg font-bold">{migrant.name}</h2>
                   <p>id : {migrant.id} </p>
                   <p>
+                    {t("registrantId")} : {migrant.registrantId}
+                  </p>
+                  <p>
                     {t("centrality")}: {centralityValues[migrant.id] || 0}
                   </p>
                   <p>
@@ -728,6 +770,9 @@ const Map: React.FC<MapProps> = ({ user }) => {
                     <h2 className="text-lg font-bold">{org.name}</h2>
                     <p>id: {org.id} </p>
                     <p>
+                      {t("registrantId")} : {org.registrantId}
+                    </p>
+                    <p>
                       {t("centrality")}: {centralityValues[org.id] || 0}
                     </p>
                     <p>
@@ -777,5 +822,26 @@ const Map: React.FC<MapProps> = ({ user }) => {
     </div>
   );
 };
+
+const LegendBox = styled.div`
+  position: absolute;
+  top: 5rem;
+  left: 2.3rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* 지도 위에 표시되도록 z-index 설정 */
+  font-size: 1rem;
+
+  h2 {
+    font-size: 1rem; /* h2 태그의 글자 크기 조정 */
+  }
+
+  ul {
+    font-size: 0.8rem; /* ul 태그의 글자 크기 조정 */
+  }
+`;
 
 export default Map;

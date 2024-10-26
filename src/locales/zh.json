@@ -54,5 +54,8 @@
   "topMigrants": "移民的中心性  TOP5",
   "topOrganizations": "团体的中心性 TOP5",
   "logout": "注销",
-  "welcome": "，欢迎访问 MigNetVu！"
+  "welcome": "，欢迎访问 MigNetVu！",
+  "registrantId": "注册人",
+  "topRegistrants": "前3名注册节点贡献者",
+  "nodeCount": "网站"
 }

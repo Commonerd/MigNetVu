@@ -22,7 +22,7 @@ export const mockMigrants: Migrant[] = [
         type: "professional",
       },
     ],
-    registrantId: "16", // Randomly assigned
+    registrantId: "1", // Randomly assigned
   },
   {
     id: 2,
@@ -68,7 +68,7 @@ export const mockMigrants: Migrant[] = [
         type: "business",
       },
     ],
-    registrantId: "8", // Randomly assigned
+    registrantId: "1", // Randomly assigned
   },
   {
     id: 4,
@@ -91,7 +91,7 @@ export const mockMigrants: Migrant[] = [
         type: "cultural",
       },
     ],
-    registrantId: "2", // Randomly assigned
+    registrantId: "1", // Randomly assigned
   },
   {
     id: 5,
@@ -163,7 +163,7 @@ export const mockMigrants: Migrant[] = [
       },
       { targetId: 6, targetType: "migrant", strength: 5, type: "friend" },
     ],
-    registrantId: "11", // Randomly assigned
+    registrantId: "1", // Randomly assigned
   },
   {
     id: 8,
@@ -307,7 +307,7 @@ export const mockMigrants: Migrant[] = [
       },
       { targetId: 5, targetType: "migrant", strength: 4, type: "friend" },
     ],
-    registrantId: "14", // Randomly assigned
+    registrantId: "1", // Randomly assigned
   },
   {
     id: 14,
@@ -330,7 +330,7 @@ export const mockMigrants: Migrant[] = [
       },
       { targetId: 4, targetType: "migrant", strength: 2, type: "friend" },
     ],
-    registrantId: "10", // Randomly assigned
+    registrantId: "1", // Randomly assigned
   },
   {
     id: 15,
@@ -371,7 +371,7 @@ export const mockMigrants: Migrant[] = [
       { targetId: 4, targetType: "migrant", strength: 3, type: "colleague" },
       { targetId: 5, targetType: "migrant", strength: 2, type: "friend" },
     ],
-    registrantId: "3", // Randomly assigned
+    registrantId: "1", // Randomly assigned
   },
   {
     id: 17,
@@ -394,7 +394,7 @@ export const mockMigrants: Migrant[] = [
       },
       { targetId: 6, targetType: "migrant", strength: 3, type: "friend" },
     ],
-    registrantId: "12", // Randomly assigned
+    registrantId: "1", // Randomly assigned
   },
   {
     id: 18,

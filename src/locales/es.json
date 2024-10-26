@@ -61,5 +61,8 @@
   "topMigrantes": "Centralidad de Migratns TOP5",
   "topOrganizations": "Organizaciones Centralidad TOP5",
   "logout": "Cierre de sesión",
-  "welcome": ", bienvenido a MigNetVu!"
+  "welcome": ", bienvenido a MigNetVu!",
+  "registrantId": "Registrante",
+  "topRegistrants": "Registro de nodos Contribuyentes Top3",
+  "nodeCount": "Nodos"
 }

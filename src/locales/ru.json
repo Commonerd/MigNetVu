@@ -54,5 +54,8 @@
   "topMigrants": "центральность мигранта ТОП5",
   "topOrganizations": "Центрированность организаций ТОП5",
   "logout": "выход из системы",
-  "welcome": ", добро пожаловать в MagnetView!"
+  "welcome": ", добро пожаловать в MagnetView!",
+  "registrantId": "Регистрант",
+  "topRegistrants": "Регистрация узла Вкладчики Top3",
+  "nodeCount": "Узлы"
 }

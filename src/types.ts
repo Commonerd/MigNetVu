@@ -11,6 +11,7 @@ export interface Migrant {
   occupation: string;
   education: string;
   languagesSpoken: string[];
+  registrantId: string;
 }
 
 export interface Organization {
@@ -24,6 +25,7 @@ export interface Organization {
   mission: string;
   services: string[];
   contactInfo: string;
+  registrantId: string;
 }
 
 export interface Connection {
