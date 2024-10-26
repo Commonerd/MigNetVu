@@ -160,7 +160,7 @@ const Map: React.FC<MapProps> = ({ user }) => {
     ethnicity: "all",
     connectionType: "all",
     entityType: "all",
-    yearRange: [1900, 2023],
+    yearRange: [1800, 2023],
   });
   const [centralityType, setCentralityType] = useState<string>("none");
   const [highlightedNode, setHighlightedNode] = useState<{
