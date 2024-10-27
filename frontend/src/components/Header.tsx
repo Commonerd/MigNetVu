@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ user, setUser }) => {
     setUser({ email: "", isLoggedIn: false }); // 로그아웃 시 사용자 상태 초기화
     sessionStorage.removeItem("isLoggedIn"); // 로그인 정보 삭제
     alert(t("logoutSuccess"));
-    navigate("/"); // 로그아웃 후 홈으로 이동
+    navigate("/");    // 로그아웃 후 홈으로 이동
   };
 
   return (
